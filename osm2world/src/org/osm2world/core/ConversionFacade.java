@@ -304,6 +304,7 @@ public class ConversionFacade {
 		updatePhase(Phase.MAP_DATA);
 		
 		OriginMapProjection mapProjection = mapProjectionFactory.make();
+                //tommaso In questo metodo andiamo a settare il boundy box dell'area
 		mapProjection.setOrigin(osmData);
 		
 		OSMToMapDataConverter converter = new OSMToMapDataConverter(mapProjection);
@@ -313,13 +314,16 @@ public class ConversionFacade {
 		updatePhase(Phase.REPRESENTATION);
 		
 		if (worldModules == null) {
+                        // tommaso qui vengono definiti tutti glioggetti che comporranno l'oggetto da renderizzare
 			worldModules = createDefaultModuleList();
 		}
 		
+                //tommaso leggiamo la configurazione per il setting dei materiali
 		Materials.configureMaterials(config);
 			//this will cause problems if multiple conversions are run
 			//at the same time, because global variables are being modified
 		
+                // tommaso ad ogni elemento dell'ambiente viene passata la  per effettuare il rendering corretto
 		WorldCreator moduleManager =
 			new WorldCreator(config, worldModules);
 		moduleManager.addRepresentationsTo(mapData);

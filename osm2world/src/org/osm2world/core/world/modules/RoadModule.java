@@ -112,6 +112,7 @@ public class RoadModule extends ConfigurableWorldModule {
 		
 	}
 
+        //tommaso verifichiamo se stiamo per porcessaer una zona viaria
 	private static boolean isRoad(TagGroup tags) {
 		if (tags.containsKey("highway")
 				&& !tags.contains("highway", "construction")
