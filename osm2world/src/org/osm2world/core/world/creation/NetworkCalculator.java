@@ -35,6 +35,7 @@ public class NetworkCalculator {
 	/**
 	 * calculates cut and offset information for all
 	 * NetworkNode/Line/AreaRepresentations of elements in a grid.
+         * @param grid
 	 */
 	public static void calculateNetworkInformationInGrid(MapData grid) {
 		
@@ -44,8 +45,8 @@ public class NetworkCalculator {
 			//TODO: also work with nodes that aren't Network*NodeRepresentations,
 			//  but connect two NetworkWaySegmentRep.s (invisible connectors)
 			
-			final List<MapWaySegment> inboundNLines = new ArrayList<MapWaySegment>();
-			List<MapWaySegment> outboundNLines = new ArrayList<MapWaySegment>();
+			final List<MapWaySegment> inboundNLines = new ArrayList<>();
+			List<MapWaySegment> outboundNLines = new ArrayList<>();
 			
 			for (MapWaySegment line : node.getInboundLines()) {
 				if (line.getPrimaryRepresentation() instanceof NetworkWaySegmentWorldObject) {
