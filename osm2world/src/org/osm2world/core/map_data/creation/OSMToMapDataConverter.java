@@ -89,8 +89,16 @@ public class OSMToMapDataConverter {
         /* create MapNode for each OSM node */
         final Map<OSMNode, MapNode> nodeMap = new HashMap<>();
 
+        //Qui andiamo ad effettuare il calcolo della proiezione XZ che ci interessa
         for (OSMNode node : osmData.getNodes()) {
             VectorXZ nodePos = mapProjection.calcPos(node.lat, node.lon);
+            
+            System.err.println("prima della trasformazione abbiamo i seguenti valori lat=" + node.lat + " lon=" + node.lon);
+            System.err.println("Dopo la trasformazione abbiamo la proiezione x=" + nodePos.x + " z=" + nodePos.z);
+            
+            float lat = (float)mapProjection.calcLat(nodePos);
+            float lon = (float)mapProjection.calcLon(nodePos);
+            System.err.println("Dalla ritrasformazione dei dati otteniamo i seguenti valori lat=" + lat + " lon=" + lon);
             MapNode mapNode = new MapNode(nodePos, node);
             mapNodes.add(mapNode);
             nodeMap.put(node, mapNode);

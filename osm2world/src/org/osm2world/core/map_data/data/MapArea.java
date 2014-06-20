@@ -29,8 +29,7 @@ public class MapArea implements MapElement {
 	@SuppressWarnings("unchecked") //is later checked for EMPTY_LIST using ==
 	private Collection<MapOverlap<?,?>> overlaps = Collections.EMPTY_LIST;
 	
-	private List<AreaWorldObject> representations =
-		new ArrayList<AreaWorldObject>(1);
+	private List<AreaWorldObject> representations =	new ArrayList<AreaWorldObject>(1);
 	
 	//TODO: contained / intersecting nodes/lines
 	
