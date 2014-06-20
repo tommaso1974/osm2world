@@ -304,7 +304,7 @@ public class ConversionFacade {
         updatePhase(Phase.REPRESENTATION);
 
         if (worldModules == null) {
-            // tommaso qui vengono definiti tutti glioggetti che comporranno l'oggetto da renderizzare
+            // tommaso qui vengono definiti tutti gli oggetti che comporranno l'oggetto da renderizzare
             worldModules = createDefaultModuleList();
         }
 
@@ -313,7 +313,7 @@ public class ConversionFacade {
 			//this will cause problems if multiple conversions are run
         //at the same time, because global variables are being modified
 
-        // tommaso ad ogni elemento dell'ambiente viene passata la  per effettuare il rendering corretto
+        // tommaso ad ogni elemento dell'ambiente viene passata per effettuare il rendering corretto
         WorldCreator moduleManager = new WorldCreator(config, worldModules);
         moduleManager.addRepresentationsTo(mapData);
 

@@ -87,7 +87,7 @@ public class OSMToMapDataConverter {
             final List<MapArea> mapAreas) {
 
         /* create MapNode for each OSM node */
-        final Map<OSMNode, MapNode> nodeMap = new HashMap<OSMNode, MapNode>();
+        final Map<OSMNode, MapNode> nodeMap = new HashMap<>();
 
         for (OSMNode node : osmData.getNodes()) {
             VectorXZ nodePos = mapProjection.calcPos(node.lat, node.lon);
@@ -97,7 +97,7 @@ public class OSMToMapDataConverter {
         }
 
         /* create areas ... */
-        final Map<OSMWay, MapArea> areaMap = new HashMap<OSMWay, MapArea>();
+        final Map<OSMWay, MapArea> areaMap = new HashMap<>();
 
         /* ... based on multipolygons */
         iterate(osmData.getRelations(), new Operation<OSMRelation>() {
@@ -145,9 +145,9 @@ public class OSMToMapDataConverter {
                 //create MapArea only if at least one tag is an area tag
                 for (Tag tag : way.tags) {
                     if (ruleset.isAreaTag(tag)) {
-						//TODO: check whether this is old-style MP outer
+                        //TODO: check whether this is old-style MP outer
 
-                        List<MapNode> nodes = new ArrayList<MapNode>(way.nodes.size());
+                        List<MapNode> nodes = new ArrayList<>(way.nodes.size());
                         for (OSMNode boundaryOSMNode : way.nodes) {
                             nodes.add(nodeMap.get(boundaryOSMNode));
                         }
@@ -180,7 +180,7 @@ public class OSMToMapDataConverter {
 
         } else {
 
-			//TODO fall back on data boundary if file does not contain bounds
+            //TODO fall back on data boundary if file does not contain bounds
         }
 
         /* finish calculations */
