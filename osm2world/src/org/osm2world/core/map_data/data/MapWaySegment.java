@@ -92,6 +92,8 @@ public class MapWaySegment extends MapSegment implements MapElement {
 
     /**
      * adds a visual representation for this way segment
+     *
+     * @param representation
      */
     public void addRepresentation(WaySegmentWorldObject representation) {
         this.representations.add(representation);

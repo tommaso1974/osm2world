@@ -27,69 +27,66 @@ import org.osm2world.core.world.modules.common.AbstractModule;
  */
 public class PoolModule extends AbstractModule {
 
-	private final boolean isPool(TagGroup tags) {
-		boolean pool = tags.contains("amenity", "swimming_pool");
-		pool |= tags.contains("leisure", "swimming_pool");
-		
-		return pool;
-	}
-	
-	private final boolean isPool(MapArea area) {
-		return isPool(area.getTags());
-	}
-	
-	
-	@Override
-	protected void applyToArea(MapArea area) {
-		if (isPool(area))
-			area.addRepresentation(new Pool(area));
-	}
+    private final boolean isPool(TagGroup tags) {
+        boolean pool = tags.contains("amenity", "swimming_pool");
+        pool |= tags.contains("leisure", "swimming_pool");
 
-	
-	private static class Pool extends AbstractAreaWorldObject
-		implements RenderableToAllTargets, TerrainBoundaryWorldObject {
-	
-		public Pool(MapArea area) {
-			super(area);
-		}
+        return pool;
+    }
 
-		@Override
-		public GroundState getGroundState() {
-			return GroundState.ON;
-		}
+    private final boolean isPool(MapArea area) {
+        return isPool(area.getTags());
+    }
 
-		@Override
-		public void renderTo(Target<?> target) {
+    @Override
+    protected void applyToArea(MapArea area) {
+        if (isPool(area)) {
+            area.addRepresentation(new Pool(area));
+        }
+    }
 
-			/* render water */
-			
-			Collection<TriangleXYZ> triangles = getTriangulation();
-			
-			target.drawTriangles(PURIFIED_WATER, triangles,
-					triangleTexCoordLists(triangles, PURIFIED_WATER, GLOBAL_X_Z));
+    private static class Pool extends AbstractAreaWorldObject
+            implements RenderableToAllTargets, TerrainBoundaryWorldObject {
 
-			/* draw a small area around the pool */
+        public Pool(MapArea area) {
+            super(area);
+        }
 
-			double width=1;
-			double height=0.1;
-			
-			List<VectorXYZ> wallShape = asList(
-					new VectorXYZ(-width/2, 0, 0),
-					new VectorXYZ(-width/2, height, 0),
-					new VectorXYZ(+width/2, height, 0),
-					new VectorXYZ(+width/2, 0, 0)
-			);
+        @Override
+        public GroundState getGroundState() {
+            return GroundState.ON;
+        }
 
-			List<VectorXYZ> path = getOutlinePolygon().getVertexLoop();
-			
-			List<List<VectorXYZ>> strips = createShapeExtrusionAlong(
-					wallShape, path,
-					nCopies(path.size(), VectorXYZ.Y_UNIT));
-			
-			for (List<VectorXYZ> strip : strips) {
-				target.drawTriangleStrip(Materials.CONCRETE, strip,
-						texCoordLists(strip, Materials.CONCRETE, GLOBAL_X_Z));
-			}
-		}
-	}
+        @Override
+        public void renderTo(Target<?> target) {
+
+            /* render water */
+            Collection<TriangleXYZ> triangles = getTriangulation();
+
+            target.drawTriangles(PURIFIED_WATER, triangles,
+                    triangleTexCoordLists(triangles, PURIFIED_WATER, GLOBAL_X_Z));
+
+            /* draw a small area around the pool */
+            double width = 1;
+            double height = 0.1;
+
+            List<VectorXYZ> wallShape = asList(
+                    new VectorXYZ(-width / 2, 0, 0),
+                    new VectorXYZ(-width / 2, height, 0),
+                    new VectorXYZ(+width / 2, height, 0),
+                    new VectorXYZ(+width / 2, 0, 0)
+            );
+
+            List<VectorXYZ> path = getOutlinePolygon().getVertexLoop();
+
+            List<List<VectorXYZ>> strips = createShapeExtrusionAlong(
+                    wallShape, path,
+                    nCopies(path.size(), VectorXYZ.Y_UNIT));
+
+            for (List<VectorXYZ> strip : strips) {
+                target.drawTriangleStrip(Materials.CONCRETE, strip,
+                        texCoordLists(strip, Materials.CONCRETE, GLOBAL_X_Z));
+            }
+        }
+    }
 }

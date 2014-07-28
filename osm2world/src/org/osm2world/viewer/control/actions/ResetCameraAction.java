@@ -14,45 +14,44 @@ import org.osm2world.viewer.model.Defaults;
 import org.osm2world.viewer.model.RenderOptions;
 import org.osm2world.viewer.view.ViewerFrame;
 
-
 public class ResetCameraAction extends AbstractAction implements Observer {
 
-	ViewerFrame viewerFrame;
-	Data data;
-	RenderOptions renderOptions;
+    ViewerFrame viewerFrame;
+    Data data;
+    RenderOptions renderOptions;
 
-	public ResetCameraAction(ViewerFrame viewerFrame, Data data, RenderOptions renderOptions) {
+    public ResetCameraAction(ViewerFrame viewerFrame, Data data, RenderOptions renderOptions) {
 
-		super("Reset Camera");
-		putValue(SHORT_DESCRIPTION, "Use this if you have messed up the camera");
+        super("Reset Camera");
+        putValue(SHORT_DESCRIPTION, "Use this if you have messed up the camera");
 
-		this.viewerFrame = viewerFrame;
-		this.data = data;
-		this.renderOptions = renderOptions;
-	
-		setEnabled(false);
-		data.addObserver(this);
-		
-	}
-	
-	@Override
-	public void update(Observable o, Object arg) {
-		setEnabled(data.getConversionResults() != null);
-	}
+        this.viewerFrame = viewerFrame;
+        this.data = data;
+        this.renderOptions = renderOptions;
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
+        setEnabled(false);
+        data.addObserver(this);
 
-		MapData mapData = data.getConversionResults().getMapData();
+    }
 
-		VectorXZ camLookAt = mapData.getCenter();
+    @Override
+    public void update(Observable o, Object arg) {
+        setEnabled(data.getConversionResults() != null);
+    }
 
-		renderOptions.camera = new Camera();
-		renderOptions.camera.setCamera(camLookAt.x, 1000, camLookAt.z-1000,
-                                       camLookAt.x, 0, camLookAt.z);
-		
-		renderOptions.projection = Defaults.PERSPECTIVE_PROJECTION;
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-	}
+        MapData mapData = data.getConversionResults().getMapData();
+
+        VectorXZ camLookAt = mapData.getCenter();
+
+        renderOptions.camera = new Camera();
+        renderOptions.camera.setCamera(camLookAt.x, 1000, camLookAt.z - 1000,
+                camLookAt.x, 0, camLookAt.z);
+
+        renderOptions.projection = Defaults.PERSPECTIVE_PROJECTION;
+
+    }
 
 }

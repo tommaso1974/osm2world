@@ -10,38 +10,37 @@ import org.osm2world.viewer.model.Defaults;
 import org.osm2world.viewer.model.RenderOptions;
 import org.osm2world.viewer.view.ViewerFrame;
 
-
 public class ToggleOrthographicProjectionAction extends AbstractAction {
 
-	private final ViewerFrame viewerFrame;
-	private final Data data;
-	private final RenderOptions renderOptions;
-		
-	public ToggleOrthographicProjectionAction(ViewerFrame viewerFrame, Data data,
-			RenderOptions renderOptions) {
-		
-		super("Orthographic projection");
-		putValue(SHORT_DESCRIPTION, "Switches between orthographic and perspective projection");
-		putValue(MNEMONIC_KEY, KeyEvent.VK_C);
-		putValue(SELECTED_KEY, renderOptions.projection.isOrthographic());
-		
-		this.viewerFrame = viewerFrame;
-		this.data = data;
-		this.renderOptions = renderOptions;
+    private final ViewerFrame viewerFrame;
+    private final Data data;
+    private final RenderOptions renderOptions;
 
-	}
+    public ToggleOrthographicProjectionAction(ViewerFrame viewerFrame, Data data,
+            RenderOptions renderOptions) {
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
+        super("Orthographic projection");
+        putValue(SHORT_DESCRIPTION, "Switches between orthographic and perspective projection");
+        putValue(MNEMONIC_KEY, KeyEvent.VK_C);
+        putValue(SELECTED_KEY, renderOptions.projection.isOrthographic());
 
-		if (renderOptions.projection.isOrthographic()) {
-			renderOptions.projection = Defaults.PERSPECTIVE_PROJECTION;
-		} else {
-			renderOptions.projection = Defaults.ORTHOGRAPHIC_PROJECTION;
-		}
-		
-		putValue(SELECTED_KEY, renderOptions.projection.isOrthographic());
-				
-	}
-	
+        this.viewerFrame = viewerFrame;
+        this.data = data;
+        this.renderOptions = renderOptions;
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        if (renderOptions.projection.isOrthographic()) {
+            renderOptions.projection = Defaults.PERSPECTIVE_PROJECTION;
+        } else {
+            renderOptions.projection = Defaults.ORTHOGRAPHIC_PROJECTION;
+        }
+
+        putValue(SELECTED_KEY, renderOptions.projection.isOrthographic());
+
+    }
+
 }

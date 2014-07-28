@@ -16,46 +16,46 @@ import org.osm2world.viewer.view.ViewerFrame;
 
 public class SetCameraToCoordinateAction extends AbstractAction implements Observer {
 
-	ViewerFrame viewerFrame;
-	Data data;
-	RenderOptions renderOptions;
+    ViewerFrame viewerFrame;
+    Data data;
+    RenderOptions renderOptions;
 
-	public SetCameraToCoordinateAction(ViewerFrame viewerFrame, Data data, RenderOptions renderOptions) {
+    public SetCameraToCoordinateAction(ViewerFrame viewerFrame, Data data, RenderOptions renderOptions) {
 
-		super("Set camera to coordinate");
-		putValue(SHORT_DESCRIPTION, "Precisely position the camera");
+        super("Set camera to coordinate");
+        putValue(SHORT_DESCRIPTION, "Precisely position the camera");
 
-		this.viewerFrame = viewerFrame;
-		this.data = data;
-		this.renderOptions = renderOptions;
-	
-		setEnabled(false);
-		data.addObserver(this);
-		
-	}
-	
-	@Override
-	public void update(Observable o, Object arg) {
-		setEnabled(data.getConversionResults() != null);
-	}
+        this.viewerFrame = viewerFrame;
+        this.data = data;
+        this.renderOptions = renderOptions;
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
+        setEnabled(false);
+        data.addObserver(this);
 
-		double lat = Double.parseDouble(
-				JOptionPane.showInputDialog(viewerFrame, "lat"));
-		double lon = Double.parseDouble(
-				JOptionPane.showInputDialog(viewerFrame, "lon"));
-		double height = Double.parseDouble(
-				JOptionPane.showInputDialog(viewerFrame, "height"));
-		
-		MapProjection projection = data.getConversionResults().getMapProjection();
+    }
 
-		VectorXZ newPosXZ = projection.calcPos(lat, lon);
-		VectorXYZ newPos = newPosXZ.xyz(height);
-		
-		renderOptions.camera.move(newPos.subtract(renderOptions.camera.getPos()));
-		
-	}
+    @Override
+    public void update(Observable o, Object arg) {
+        setEnabled(data.getConversionResults() != null);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        double lat = Double.parseDouble(
+                JOptionPane.showInputDialog(viewerFrame, "lat"));
+        double lon = Double.parseDouble(
+                JOptionPane.showInputDialog(viewerFrame, "lon"));
+        double height = Double.parseDouble(
+                JOptionPane.showInputDialog(viewerFrame, "height"));
+
+        MapProjection projection = data.getConversionResults().getMapProjection();
+
+        VectorXZ newPosXZ = projection.calcPos(lat, lon);
+        VectorXYZ newPos = newPosXZ.xyz(height);
+
+        renderOptions.camera.move(newPos.subtract(renderOptions.camera.getPos()));
+
+    }
 
 }

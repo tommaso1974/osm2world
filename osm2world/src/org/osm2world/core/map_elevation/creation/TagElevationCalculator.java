@@ -8,30 +8,30 @@ import org.osm2world.core.map_data.data.MapNode;
 import org.osm2world.core.map_data.data.MapSegment;
 
 /**
- * relies on tags that explicitly set elevation.
- * Subclasses determine the tag(s) to be used for this purpose.
+ * relies on tags that explicitly set elevation. Subclasses determine the tag(s)
+ * to be used for this purpose.
  */
 public abstract class TagElevationCalculator implements ElevationCalculator {
-	
-	Double terrainElevation;
-	boolean enableUnknownEleWarning;
-	
-	/**
-	 * @param terrainElevation  elevation for the terrain
-	 */
-	public TagElevationCalculator(Double terrainElevation,
-			boolean enableUnknownEleWarning) {
-		this.terrainElevation = terrainElevation;
-		this.enableUnknownEleWarning = enableUnknownEleWarning;
-	}
-	
-	public TagElevationCalculator() {
-		this(0.0, false);
-	}
-	
-	@Override
-	public void calculateElevations(MapData mapData,
-			TerrainElevationData eleData) {
+
+    Double terrainElevation;
+    boolean enableUnknownEleWarning;
+
+    /**
+     * @param terrainElevation elevation for the terrain
+     */
+    public TagElevationCalculator(Double terrainElevation,
+            boolean enableUnknownEleWarning) {
+        this.terrainElevation = terrainElevation;
+        this.enableUnknownEleWarning = enableUnknownEleWarning;
+    }
+
+    public TagElevationCalculator() {
+        this(0.0, false);
+    }
+
+    @Override
+    public void calculateElevations(MapData mapData,
+            TerrainElevationData eleData) {
 
 //		//TODO replace old ElevationProfile stuff
 //
@@ -169,43 +169,42 @@ public abstract class TagElevationCalculator implements ElevationCalculator {
 //			area.setElevationProfile(profile);
 //
 //		}
-		
-	}
-	
-	/**
-	 * a sequence of {@link MapSegment}s
-	 * that leads to a {@link MapNode} at the end
-	 */
-	private static class Connection {
-		
-		public final List<MapSegment> segmentSequence;
-		public final MapNode endNode;
-		
-		public Connection(List<MapSegment> segmentSequence, MapNode endNode) {
-			this.segmentSequence = segmentSequence;
-			this.endNode = endNode;
-		}
-		
-		public double getLength() {
-			double distance = 0.0;
-			for (MapSegment s : segmentSequence) {
-				distance += s.getLineSegment().getLength();
-			}
-			return distance;
-		}
-		
-	}
-	
-	/**
-	 * Tries to find the segment sequence to a node with elevation information.
-	 * More precisely, this follows the sequence of segments started by
-	 * the specified first segment until ... <ul>
-	 * <li>... a node with elevation information is found and is returned.</li>
-	 * <li>... the sequence segment branches, null is returned.</li>
-	 * <li>... the sequence returns to the start, null is returned.</li>
-	 * </ul>
-	 */
-	//TODO replace old ElevationProfile stuff
+    }
+
+    /**
+     * a sequence of {@link MapSegment}s that leads to a {@link MapNode} at the
+     * end
+     */
+    private static class Connection {
+
+        public final List<MapSegment> segmentSequence;
+        public final MapNode endNode;
+
+        public Connection(List<MapSegment> segmentSequence, MapNode endNode) {
+            this.segmentSequence = segmentSequence;
+            this.endNode = endNode;
+        }
+
+        public double getLength() {
+            double distance = 0.0;
+            for (MapSegment s : segmentSequence) {
+                distance += s.getLineSegment().getLength();
+            }
+            return distance;
+        }
+
+    }
+
+    /**
+     * Tries to find the segment sequence to a node with elevation information.
+     * More precisely, this follows the sequence of segments started by the
+     * specified first segment until ... <ul>
+     * <li>... a node with elevation information is found and is returned.</li>
+     * <li>... the sequence segment branches, null is returned.</li>
+     * <li>... the sequence returns to the start, null is returned.</li>
+     * </ul>
+     */
+    //TODO replace old ElevationProfile stuff
 //	private static final Connection findConnectionToNodeWithEle(
 //			MapNode node, MapSegment firstSegmentForSequence) {
 //
@@ -241,12 +240,11 @@ public abstract class TagElevationCalculator implements ElevationCalculator {
 //		}
 //
 //	}
-	
-	/**
-	 * returns the elevation as set explicitly by the tags
-	 * 
-	 * @return  elevation; null if the tags don't define the elevation
-	 */
-	protected abstract Double getEleForTags(TagGroup tags);
+    /**
+     * returns the elevation as set explicitly by the tags
+     *
+     * @return elevation; null if the tags don't define the elevation
+     */
+    protected abstract Double getEleForTags(TagGroup tags);
 
 }

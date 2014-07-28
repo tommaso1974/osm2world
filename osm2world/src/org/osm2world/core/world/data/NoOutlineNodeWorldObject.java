@@ -10,55 +10,55 @@ import org.osm2world.core.math.VectorXYZ;
 import org.osm2world.core.math.datastructures.IntersectionTestObject;
 
 /**
- * superclass for {@link NodeWorldObject}s that don't have an outline,
- * and are not part of a network.
- * Instead, they are located at a single point on the terrain or other areas
- * and not connected to other features.
- * 
+ * superclass for {@link NodeWorldObject}s that don't have an outline, and are
+ * not part of a network. Instead, they are located at a single point on the
+ * terrain or other areas and not connected to other features.
+ *
  * @see OutlineNodeWorldObject
  */
 public abstract class NoOutlineNodeWorldObject implements NodeWorldObject,
-		IntersectionTestObject {
-	
-	protected final MapNode node;
-	
-	private final EleConnector connector;
-	
-	public NoOutlineNodeWorldObject(MapNode node) {
-		this.node = node;
-		this.connector = new EleConnector(node.getPos(), node,
-				getGroundState());
-	}
-	
-	@Override
-	public final MapNode getPrimaryMapElement() {
-		return node;
-	}
-	
-	@Override
-	public AxisAlignedBoundingBoxXZ getAxisAlignedBoundingBoxXZ() {
-		return new AxisAlignedBoundingBoxXZ(singleton(node.getPos()));
-	}
-	
-	@Override
-	public Iterable<EleConnector> getEleConnectors() {
-		return singleton(connector);
-	}
+        IntersectionTestObject {
 
-	@Override
-	public void defineEleConstraints(EleConstraintEnforcer enforcer) {}
-	
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + "(" + node + ")";
-	}
+    protected final MapNode node;
 
-	/**
-	 * provides subclasses with the 3d position of the {@link MapNode}.
-	 * Only works during rendering (i.e. after elevation calculation).
-	 */
-	protected VectorXYZ getBase() {
-		return connector.getPosXYZ();
-	}
-	
+    private final EleConnector connector;
+
+    public NoOutlineNodeWorldObject(MapNode node) {
+        this.node = node;
+        this.connector = new EleConnector(node.getPos(), node,
+                getGroundState());
+    }
+
+    @Override
+    public final MapNode getPrimaryMapElement() {
+        return node;
+    }
+
+    @Override
+    public AxisAlignedBoundingBoxXZ getAxisAlignedBoundingBoxXZ() {
+        return new AxisAlignedBoundingBoxXZ(singleton(node.getPos()));
+    }
+
+    @Override
+    public Iterable<EleConnector> getEleConnectors() {
+        return singleton(connector);
+    }
+
+    @Override
+    public void defineEleConstraints(EleConstraintEnforcer enforcer) {
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "(" + node + ")";
+    }
+
+    /**
+     * provides subclasses with the 3d position of the {@link MapNode}. Only
+     * works during rendering (i.e. after elevation calculation).
+     */
+    protected VectorXYZ getBase() {
+        return connector.getPosXYZ();
+    }
+
 }

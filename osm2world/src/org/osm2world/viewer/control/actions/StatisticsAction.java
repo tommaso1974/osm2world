@@ -13,40 +13,39 @@ import org.osm2world.viewer.model.Data;
 import org.osm2world.viewer.view.StatisticsDialog;
 import org.osm2world.viewer.view.ViewerFrame;
 
-
 public class StatisticsAction extends AbstractAction implements Observer {
 
-	private final ViewerFrame viewerFrame;
-	private final Data data;
-	
-	public StatisticsAction(ViewerFrame viewerFrame, Data data) {
-		
-		super("Statistics");
-		putValue(SHORT_DESCRIPTION, "Shows statistics for the current scene");
-		
-		this.viewerFrame = viewerFrame;
-		this.data = data;
-		
-		setEnabled(false);
-		data.addObserver(this);
-		
-	}
-	
-	@Override
-	public void update(Observable o, Object arg) {
-		setEnabled(data.getConversionResults() != null);
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		
-		Results conversionResults = data.getConversionResults();
-		
-		StatisticsTarget stats = new StatisticsTarget();
-		
-		TargetUtil.renderWorldObjects(stats, conversionResults.getMapData(), true);
-		new StatisticsDialog(viewerFrame, stats).setVisible(true);
-		
-	}
-		
+    private final ViewerFrame viewerFrame;
+    private final Data data;
+
+    public StatisticsAction(ViewerFrame viewerFrame, Data data) {
+
+        super("Statistics");
+        putValue(SHORT_DESCRIPTION, "Shows statistics for the current scene");
+
+        this.viewerFrame = viewerFrame;
+        this.data = data;
+
+        setEnabled(false);
+        data.addObserver(this);
+
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        setEnabled(data.getConversionResults() != null);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+
+        Results conversionResults = data.getConversionResults();
+
+        StatisticsTarget stats = new StatisticsTarget();
+
+        TargetUtil.renderWorldObjects(stats, conversionResults.getMapData(), true);
+        new StatisticsDialog(viewerFrame, stats).setVisible(true);
+
+    }
+
 }

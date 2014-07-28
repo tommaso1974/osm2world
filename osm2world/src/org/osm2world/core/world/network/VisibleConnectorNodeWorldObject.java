@@ -132,7 +132,7 @@ public abstract class VisibleConnectorNodeWorldObject
                 NetworkWaySegmentWorldObject rep
                         = (NetworkWaySegmentWorldObject) segment.getPrimaryRepresentation();
 
-				//TODO: the calculations for pos1/2 should be part of the NetworkLineRepresentation (it's used quite often)
+                //TODO: the calculations for pos1/2 should be part of the NetworkLineRepresentation (it's used quite often)
                 if (segment.getEndNode() == node) { //inbound segment
 
                     VectorXZ pos1 = node.getPos()

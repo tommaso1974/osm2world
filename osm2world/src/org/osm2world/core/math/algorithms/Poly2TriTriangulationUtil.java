@@ -21,135 +21,129 @@ import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import org.poly2tri.triangulation.point.TPoint;
 
 /**
- * uses the poly2tri library for triangulation.
- * Creates a Constrained Delaunay Triangulation, not true Delaunay!
+ * uses the poly2tri library for triangulation. Creates a Constrained Delaunay
+ * Triangulation, not true Delaunay!
  */
 public final class Poly2TriTriangulationUtil {
 
-	private Poly2TriTriangulationUtil() { }
-		
-	/**
-	 * triangulates of a polygon with holes.
-	 * 
-	 * Accepts some unconnected points within the polygon area
-	 * and will create triangle vertices at these points.
-	 * It will also accept line segments as edges that must be integrated
-	 * into the resulting triangulation.
-	 */
-	public static final List<TriangleXZ> triangulate(
-			SimplePolygonXZ outerPolygon,
-			Collection<SimplePolygonXZ> holes,
-			Collection<LineSegmentXZ> segments,
-			Collection<VectorXZ> points) {
-		
-		/* remove any problematic data (duplicate points) from the input */
-		
-		Set<VectorXZ> knownVectors =
-				new HashSet<VectorXZ>(outerPolygon.getVertexCollection());
-		
-		List<SimplePolygonXZ> filteredHoles = new ArrayList<SimplePolygonXZ>();
-		
-		for (SimplePolygonXZ hole : holes) {
-			
-			if (disjoint(hole.getVertexCollection(), knownVectors)) {
-				filteredHoles.add(hole);
-				knownVectors.addAll(hole.getVertices());
-			}
-			
-		}
-		
-		//TODO filter segments
-		
-		Set<VectorXZ> filteredPoints = new HashSet<VectorXZ>(points);
-		filteredPoints.removeAll(knownVectors);
-		
-		// remove points that are *almost* the same as a known vector
-		Iterator<VectorXZ> filteredPointsIterator = filteredPoints.iterator();
-		while (filteredPointsIterator.hasNext()) {
-			VectorXZ filteredPoint = filteredPointsIterator.next();
-			for (VectorXZ knownVector : knownVectors) {
-				if (knownVector.distanceTo(filteredPoint) < 0.2) {
-					filteredPointsIterator.remove();
-				}
-			}
-		}
-		
-		/* run the actual triangulation */
-		
-		return triangulateFast(outerPolygon, filteredHoles, segments, filteredPoints);
-				
-	}
+    private Poly2TriTriangulationUtil() {
+    }
 
-	/**
-	 * variant of {@link #triangulate(SimplePolygonXZ, Collection, Collection, Collection)}
-	 * that does not validate the input. This is obviously faster,
-	 * but the caller needs to make sure that there are no problems.
-	 */
-	public static final List<TriangleXZ> triangulateFast(
-			SimplePolygonXZ outerPolygon,
-			Collection<SimplePolygonXZ> holes,
-			Collection<LineSegmentXZ> segments,
-			Collection<VectorXZ> points) {
-		
-		/* prepare data for triangulation */
-		
-		Polygon triangulationPolygon = toPolygon(outerPolygon);
-		
-		for (SimplePolygonXZ hole : holes) {
-			triangulationPolygon.addHole(toPolygon(hole));
-		}
-		
-		//TODO collect points and constraints from segments
-		
-		for (VectorXZ p : points) {
-			triangulationPolygon.addSteinerPoint(toTPoint(p));
-		}
-		
-		/* run triangulation */
-		
-		Poly2Tri.triangulate(triangulationPolygon);
-		
-		/* convert the result to the desired format */
-		
-		List<DelaunayTriangle> triangles = triangulationPolygon.getTriangles();
-		
-		List<TriangleXZ> result = new ArrayList<TriangleXZ>(triangles.size());
-		
-		for (DelaunayTriangle triangle : triangles) {
-			result.add(toTriangleXZ(triangle));
-		}
-			
-		return result;
-		
-	}
-	
-	private static final TPoint toTPoint(VectorXZ v) {
-		return new TPoint(v.x, v.z);
-	}
+    /**
+     * triangulates of a polygon with holes.
+     *
+     * Accepts some unconnected points within the polygon area and will create
+     * triangle vertices at these points. It will also accept line segments as
+     * edges that must be integrated into the resulting triangulation.
+     */
+    public static final List<TriangleXZ> triangulate(
+            SimplePolygonXZ outerPolygon,
+            Collection<SimplePolygonXZ> holes,
+            Collection<LineSegmentXZ> segments,
+            Collection<VectorXZ> points) {
 
-	private static final VectorXZ toVectorXZ(TriangulationPoint points) {
-		return new VectorXZ(points.getX(), points.getY());
-	}
+        /* remove any problematic data (duplicate points) from the input */
+        Set<VectorXZ> knownVectors
+                = new HashSet<VectorXZ>(outerPolygon.getVertexCollection());
 
-	private static final Polygon toPolygon(SimplePolygonXZ polygon) {
-				
-		List<PolygonPoint> points = new ArrayList<PolygonPoint>(polygon.size());
-		
-		for (VectorXZ v : polygon.getVertices()) {
-			points.add(new PolygonPoint(v.x, v.z));
-		}
-		
-		return new Polygon(points);
-		
-	}
+        List<SimplePolygonXZ> filteredHoles = new ArrayList<SimplePolygonXZ>();
 
-	private static final TriangleXZ toTriangleXZ(DelaunayTriangle triangle) {
-		
-		return new TriangleXZ(
-				toVectorXZ(triangle.points[0]),
-				toVectorXZ(triangle.points[1]),
-				toVectorXZ(triangle.points[2]));
-		
-	}
-	
+        for (SimplePolygonXZ hole : holes) {
+
+            if (disjoint(hole.getVertexCollection(), knownVectors)) {
+                filteredHoles.add(hole);
+                knownVectors.addAll(hole.getVertices());
+            }
+
+        }
+
+        //TODO filter segments
+        Set<VectorXZ> filteredPoints = new HashSet<VectorXZ>(points);
+        filteredPoints.removeAll(knownVectors);
+
+        // remove points that are *almost* the same as a known vector
+        Iterator<VectorXZ> filteredPointsIterator = filteredPoints.iterator();
+        while (filteredPointsIterator.hasNext()) {
+            VectorXZ filteredPoint = filteredPointsIterator.next();
+            for (VectorXZ knownVector : knownVectors) {
+                if (knownVector.distanceTo(filteredPoint) < 0.2) {
+                    filteredPointsIterator.remove();
+                }
+            }
+        }
+
+        /* run the actual triangulation */
+        return triangulateFast(outerPolygon, filteredHoles, segments, filteredPoints);
+
+    }
+
+    /**
+     * variant of
+     * {@link #triangulate(SimplePolygonXZ, Collection, Collection, Collection)}
+     * that does not validate the input. This is obviously faster, but the
+     * caller needs to make sure that there are no problems.
+     */
+    public static final List<TriangleXZ> triangulateFast(
+            SimplePolygonXZ outerPolygon,
+            Collection<SimplePolygonXZ> holes,
+            Collection<LineSegmentXZ> segments,
+            Collection<VectorXZ> points) {
+
+        /* prepare data for triangulation */
+        Polygon triangulationPolygon = toPolygon(outerPolygon);
+
+        for (SimplePolygonXZ hole : holes) {
+            triangulationPolygon.addHole(toPolygon(hole));
+        }
+
+        //TODO collect points and constraints from segments
+        for (VectorXZ p : points) {
+            triangulationPolygon.addSteinerPoint(toTPoint(p));
+        }
+
+        /* run triangulation */
+        Poly2Tri.triangulate(triangulationPolygon);
+
+        /* convert the result to the desired format */
+        List<DelaunayTriangle> triangles = triangulationPolygon.getTriangles();
+
+        List<TriangleXZ> result = new ArrayList<TriangleXZ>(triangles.size());
+
+        for (DelaunayTriangle triangle : triangles) {
+            result.add(toTriangleXZ(triangle));
+        }
+
+        return result;
+
+    }
+
+    private static final TPoint toTPoint(VectorXZ v) {
+        return new TPoint(v.x, v.z);
+    }
+
+    private static final VectorXZ toVectorXZ(TriangulationPoint points) {
+        return new VectorXZ(points.getX(), points.getY());
+    }
+
+    private static final Polygon toPolygon(SimplePolygonXZ polygon) {
+
+        List<PolygonPoint> points = new ArrayList<PolygonPoint>(polygon.size());
+
+        for (VectorXZ v : polygon.getVertices()) {
+            points.add(new PolygonPoint(v.x, v.z));
+        }
+
+        return new Polygon(points);
+
+    }
+
+    private static final TriangleXZ toTriangleXZ(DelaunayTriangle triangle) {
+
+        return new TriangleXZ(
+                toVectorXZ(triangle.points[0]),
+                toVectorXZ(triangle.points[1]),
+                toVectorXZ(triangle.points[2]));
+
+    }
+
 }

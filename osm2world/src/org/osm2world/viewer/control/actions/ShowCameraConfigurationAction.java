@@ -11,32 +11,32 @@ import org.osm2world.viewer.model.Data;
 import org.osm2world.viewer.model.RenderOptions;
 
 public class ShowCameraConfigurationAction extends AbstractAction {
-	
-	private final Data data;
-	private final RenderOptions renderOptions;
-	
-	public ShowCameraConfigurationAction(Data data, RenderOptions renderOptions) {
-		super("Show current camera configuration");
-		this.data = data;
-		this.renderOptions = renderOptions;
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		
-		MapProjection mapProjection = data.getConversionResults().getMapProjection();
-		
-		VectorXYZ pos = renderOptions.camera.getPos();
-		VectorXYZ lookAt = renderOptions.camera.getLookAt();
-		
-		JOptionPane.showMessageDialog(null,
-				"posLat = " + mapProjection.calcLat(pos.xz())
-				+ "\nposLon = " + mapProjection.calcLon(pos.xz())
-				+ "\nposEle = " + pos.y
-				+ "\nlookAtLat = " + mapProjection.calcLat(lookAt.xz())
-				+ "\nlookAtLon = " + mapProjection.calcLon(lookAt.xz())
-				+ "\nlookAtEle = " + lookAt.y,
-				"Current camera configuration", JOptionPane.INFORMATION_MESSAGE);
-	}
-	
+
+    private final Data data;
+    private final RenderOptions renderOptions;
+
+    public ShowCameraConfigurationAction(Data data, RenderOptions renderOptions) {
+        super("Show current camera configuration");
+        this.data = data;
+        this.renderOptions = renderOptions;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+
+        MapProjection mapProjection = data.getConversionResults().getMapProjection();
+
+        VectorXYZ pos = renderOptions.camera.getPos();
+        VectorXYZ lookAt = renderOptions.camera.getLookAt();
+
+        JOptionPane.showMessageDialog(null,
+                "posLat = " + mapProjection.calcLat(pos.xz())
+                + "\nposLon = " + mapProjection.calcLon(pos.xz())
+                + "\nposEle = " + pos.y
+                + "\nlookAtLat = " + mapProjection.calcLat(lookAt.xz())
+                + "\nlookAtLon = " + mapProjection.calcLon(lookAt.xz())
+                + "\nlookAtEle = " + lookAt.y,
+                "Current camera configuration", JOptionPane.INFORMATION_MESSAGE);
+    }
+
 }

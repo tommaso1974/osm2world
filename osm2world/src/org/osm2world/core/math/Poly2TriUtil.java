@@ -13,201 +13,208 @@ import org.poly2tri.triangulation.TriangulationMode;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import org.poly2tri.triangulation.point.TPoint;
+
 /**
  * @author Hannes Janetzek
- * */
-
+ *
+ */
 public class Poly2TriUtil {
-	static class CDTSet implements Triangulatable {
-		List<TriangulationPoint> points = new ArrayList<TriangulationPoint>(20);
-		List<DelaunayTriangle> triangles = new ArrayList<DelaunayTriangle>(20);
-		ArrayList<LineSegmentXZ> segmentSet = new ArrayList<LineSegmentXZ>();
 
-		// it seems poly2tri requires points to be unique objects
-		HashMap<VectorXZ, TriangulationPoint> pointSet
-			= new HashMap<VectorXZ, TriangulationPoint>();
-		
-		public CDTSet(SimplePolygonXZ polygon,
-				Collection<SimplePolygonXZ> holes,
-				Collection<LineSegmentXZ> cSegments,
-				Collection<VectorXZ> cPoints) {
+    static class CDTSet implements Triangulatable {
 
-			List<VectorXZ> vertices = polygon.getVertexLoop();
+        List<TriangulationPoint> points = new ArrayList<TriangulationPoint>(20);
+        List<DelaunayTriangle> triangles = new ArrayList<DelaunayTriangle>(20);
+        ArrayList<LineSegmentXZ> segmentSet = new ArrayList<LineSegmentXZ>();
 
-			segmentSet.addAll(cSegments);
-			
-			for (VectorXZ p : cPoints) {
-				if (!pointSet.containsKey(p)) {
-					TPoint tp = new TPoint(p.x, p.z);
-					pointSet.put(p, tp);
-					points.add(tp);
-				}
-			}
-			
-			for (int i = 0, n = vertices.size() - 1; i < n; i++)
-				segmentSet.add(new LineSegmentXZ(vertices.get(i),
-						vertices.get(i + 1)));
+        // it seems poly2tri requires points to be unique objects
+        HashMap<VectorXZ, TriangulationPoint> pointSet
+                = new HashMap<VectorXZ, TriangulationPoint>();
 
-			for (SimplePolygonXZ hole : holes) {
-				vertices = hole.getVertexLoop();
-				for (int i = 0, n = vertices.size() - 1; i < n; i++)
-					segmentSet.add(new LineSegmentXZ(vertices.get(i),
-							vertices.get(i + 1)));
-			}
+        public CDTSet(SimplePolygonXZ polygon,
+                Collection<SimplePolygonXZ> holes,
+                Collection<LineSegmentXZ> cSegments,
+                Collection<VectorXZ> cPoints) {
 
-			removeDuplicateSegments();
+            List<VectorXZ> vertices = polygon.getVertexLoop();
 
-			boolean foundIntersections = false;
+            segmentSet.addAll(cSegments);
 
-			// split at intersections
-			for (int i = 0, size = segmentSet.size(); i < size - 1; i++) {
-				LineSegmentXZ l1 = segmentSet.get(i);
+            for (VectorXZ p : cPoints) {
+                if (!pointSet.containsKey(p)) {
+                    TPoint tp = new TPoint(p.x, p.z);
+                    pointSet.put(p, tp);
+                    points.add(tp);
+                }
+            }
 
-				for (int j = i + 1; j < size; j++) {
-					LineSegmentXZ l2 = segmentSet.get(j);
+            for (int i = 0, n = vertices.size() - 1; i < n; i++) {
+                segmentSet.add(new LineSegmentXZ(vertices.get(i),
+                        vertices.get(i + 1)));
+            }
 
-					VectorXZ crossing;
+            for (SimplePolygonXZ hole : holes) {
+                vertices = hole.getVertexLoop();
+                for (int i = 0, n = vertices.size() - 1; i < n; i++) {
+                    segmentSet.add(new LineSegmentXZ(vertices.get(i),
+                            vertices.get(i + 1)));
+                }
+            }
 
-					if ((crossing = l1.getIntersection(l2.p1, l2.p2)) != null) {
-						System.out.println("split " + l1 + " " + l2 + " at "
-								+ crossing);
-						foundIntersections = true;
+            removeDuplicateSegments();
 
-						segmentSet.remove(l1);
-						segmentSet.remove(l2);
+            boolean foundIntersections = false;
 
-						segmentSet.add(new LineSegmentXZ(crossing, l1.p1));
-						segmentSet.add(new LineSegmentXZ(crossing, l1.p2));
-						segmentSet.add(new LineSegmentXZ(crossing, l2.p1));
-						segmentSet.add(new LineSegmentXZ(crossing, l2.p2));
+            // split at intersections
+            for (int i = 0, size = segmentSet.size(); i < size - 1; i++) {
+                LineSegmentXZ l1 = segmentSet.get(i);
 
-						size += 2;
+                for (int j = i + 1; j < size; j++) {
+                    LineSegmentXZ l2 = segmentSet.get(j);
 
-						// first segment was removed
-						i--;
-						break;
-					}
-				}
-			}
+                    VectorXZ crossing;
 
-			if (foundIntersections)
-				removeDuplicateSegments();
-		}
+                    if ((crossing = l1.getIntersection(l2.p1, l2.p2)) != null) {
+                        System.out.println("split " + l1 + " " + l2 + " at "
+                                + crossing);
+                        foundIntersections = true;
 
-		private void removeDuplicateSegments() {
-			for (int i = 0, size = segmentSet.size(); i < size - 1; i++) {
-				LineSegmentXZ l1 = segmentSet.get(i);
+                        segmentSet.remove(l1);
+                        segmentSet.remove(l2);
 
-				for (int j = i + 1; j < size; j++) {
-					LineSegmentXZ l2 = segmentSet.get(j);
+                        segmentSet.add(new LineSegmentXZ(crossing, l1.p1));
+                        segmentSet.add(new LineSegmentXZ(crossing, l1.p2));
+                        segmentSet.add(new LineSegmentXZ(crossing, l2.p1));
+                        segmentSet.add(new LineSegmentXZ(crossing, l2.p2));
 
-					if ((l1.p1.equals(l2.p1) && l1.p2.equals(l2.p2))
-							|| (l1.p1.equals(l2.p2) && l1.p2.equals(l2.p1))) {
-						//System.out.println("remove dup " + l1 + " " + l2);
-						segmentSet.remove(j);
-						size--;
-					}
-				}
-			}
-		}
+                        size += 2;
 
-		public TriangulationMode getTriangulationMode() {
-			return TriangulationMode.CONSTRAINED;
-		}
+                        // first segment was removed
+                        i--;
+                        break;
+                    }
+                }
+            }
 
-		public List<TriangulationPoint> getPoints() {
-			return points;
-		}
+            if (foundIntersections) {
+                removeDuplicateSegments();
+            }
+        }
 
-		public List<DelaunayTriangle> getTriangles() {
-			return triangles;
-		}
+        private void removeDuplicateSegments() {
+            for (int i = 0, size = segmentSet.size(); i < size - 1; i++) {
+                LineSegmentXZ l1 = segmentSet.get(i);
 
-		public void addTriangle(DelaunayTriangle t) {
-			triangles.add(t);
-		}
+                for (int j = i + 1; j < size; j++) {
+                    LineSegmentXZ l2 = segmentSet.get(j);
 
-		public void addTriangles(List<DelaunayTriangle> list) {
-			triangles.addAll(list);
-		}
+                    if ((l1.p1.equals(l2.p1) && l1.p2.equals(l2.p2))
+                            || (l1.p1.equals(l2.p2) && l1.p2.equals(l2.p1))) {
+                        //System.out.println("remove dup " + l1 + " " + l2);
+                        segmentSet.remove(j);
+                        size--;
+                    }
+                }
+            }
+        }
 
-		public void clearTriangulation() {
-			triangles.clear();
-		}
+        public TriangulationMode getTriangulationMode() {
+            return TriangulationMode.CONSTRAINED;
+        }
 
-		public void prepareTriangulation(TriangulationContext<?> tcx) {
-			triangles.clear();
+        public List<TriangulationPoint> getPoints() {
+            return points;
+        }
 
+        public List<DelaunayTriangle> getTriangles() {
+            return triangles;
+        }
 
-			for (LineSegmentXZ l : segmentSet) {
-				TriangulationPoint tp1, tp2;
-				
-				if (!pointSet.containsKey(l.p1)){
-					tp1 = new TPoint(l.p1.x, l.p1.z);					
-					pointSet.put(l.p1, tp1);
-					points.add(tp1);
-				} else {
-					tp1 = pointSet.get(l.p1);
-				}
-				if (!pointSet.containsKey(l.p2)){
-					tp2 = new TPoint(l.p2.x, l.p2.z);	
-					pointSet.put(l.p2, tp2);
-					points.add(tp2);
-				} else {
-					tp2 = pointSet.get(l.p2);
-				}
+        public void addTriangle(DelaunayTriangle t) {
+            triangles.add(t);
+        }
 
-				tcx.newConstraint(tp1, tp2);
-			}
+        public void addTriangles(List<DelaunayTriangle> list) {
+            triangles.addAll(list);
+        }
 
-			segmentSet.clear();
-			pointSet.clear();
-	
-			tcx.addPoints(points);
-		}
-	}
+        public void clearTriangulation() {
+            triangles.clear();
+        }
 
-	public static final List<TriangleXZ> triangulate(SimplePolygonXZ polygon,
-			Collection<SimplePolygonXZ> holes,
-			Collection<LineSegmentXZ> segments, Collection<VectorXZ> points) {
+        public void prepareTriangulation(TriangulationContext<?> tcx) {
+            triangles.clear();
 
-		CDTSet cdt = new CDTSet(polygon, holes, segments, points);
-		TriangulationContext<?> tcx = Poly2Tri
-				.createContext(TriangulationAlgorithm.DTSweep);
-		tcx.prepareTriangulation(cdt);
+            for (LineSegmentXZ l : segmentSet) {
+                TriangulationPoint tp1, tp2;
 
-		Poly2Tri.triangulate(tcx);
+                if (!pointSet.containsKey(l.p1)) {
+                    tp1 = new TPoint(l.p1.x, l.p1.z);
+                    pointSet.put(l.p1, tp1);
+                    points.add(tp1);
+                } else {
+                    tp1 = pointSet.get(l.p1);
+                }
+                if (!pointSet.containsKey(l.p2)) {
+                    tp2 = new TPoint(l.p2.x, l.p2.z);
+                    pointSet.put(l.p2, tp2);
+                    points.add(tp2);
+                } else {
+                    tp2 = pointSet.get(l.p2);
+                }
 
-		List<TriangleXZ> triangles = new ArrayList<TriangleXZ>();
+                tcx.newConstraint(tp1, tp2);
+            }
 
-		List<DelaunayTriangle> result = cdt.getTriangles();
+            segmentSet.clear();
+            pointSet.clear();
 
-		if (result == null)
-			return triangles;
+            tcx.addPoints(points);
+        }
+    }
 
-		for (DelaunayTriangle t : result) {
+    public static final List<TriangleXZ> triangulate(SimplePolygonXZ polygon,
+            Collection<SimplePolygonXZ> holes,
+            Collection<LineSegmentXZ> segments, Collection<VectorXZ> points) {
 
-			TriangulationPoint tCenter = t.centroid();
-			VectorXZ center = new VectorXZ(tCenter.getX(), tCenter.getY());
+        CDTSet cdt = new CDTSet(polygon, holes, segments, points);
+        TriangulationContext<?> tcx = Poly2Tri
+                .createContext(TriangulationAlgorithm.DTSweep);
+        tcx.prepareTriangulation(cdt);
 
-			boolean triangleInHole = false;
-			for (SimplePolygonXZ hole : holes) {
-				if (hole.contains(center)) {
-					triangleInHole = true;
-					break;
-				}
-			}
+        Poly2Tri.triangulate(tcx);
 
-			if (triangleInHole || !polygon.contains(center))
-				continue;
+        List<TriangleXZ> triangles = new ArrayList<TriangleXZ>();
 
-			triangles.add(new TriangleXZ(new VectorXZ(t.points[0].getX(),
-					t.points[0].getY()), new VectorXZ(t.points[1].getX(),
-					t.points[1].getY()), new VectorXZ(t.points[2].getX(),
-					t.points[2].getY())));
-		}
+        List<DelaunayTriangle> result = cdt.getTriangles();
 
-		return triangles;
+        if (result == null) {
+            return triangles;
+        }
 
-	}
+        for (DelaunayTriangle t : result) {
+
+            TriangulationPoint tCenter = t.centroid();
+            VectorXZ center = new VectorXZ(tCenter.getX(), tCenter.getY());
+
+            boolean triangleInHole = false;
+            for (SimplePolygonXZ hole : holes) {
+                if (hole.contains(center)) {
+                    triangleInHole = true;
+                    break;
+                }
+            }
+
+            if (triangleInHole || !polygon.contains(center)) {
+                continue;
+            }
+
+            triangles.add(new TriangleXZ(new VectorXZ(t.points[0].getX(),
+                    t.points[0].getY()), new VectorXZ(t.points[1].getX(),
+                            t.points[1].getY()), new VectorXZ(t.points[2].getX(),
+                            t.points[2].getY())));
+        }
+
+        return triangles;
+
+    }
 }

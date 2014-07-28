@@ -19,41 +19,41 @@ import com.jogamp.opengl.util.awt.Screenshot;
 
 public class ExportScreenshotAction extends AbstractExportAction {
 
-	public ExportScreenshotAction(ViewerFrame viewerFrame, Data data,
-			MessageManager messageManager, RenderOptions renderOptions) {
+    public ExportScreenshotAction(ViewerFrame viewerFrame, Data data,
+            MessageManager messageManager, RenderOptions renderOptions) {
 
-		super("Export Screenshot", viewerFrame, data, messageManager, renderOptions);
-		putValue(SHORT_DESCRIPTION, "Writes the current display content to an image file");
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-				KeyEvent.VK_PRINTSCREEN, ActionEvent.CTRL_MASK));
+        super("Export Screenshot", viewerFrame, data, messageManager, renderOptions);
+        putValue(SHORT_DESCRIPTION, "Writes the current display content to an image file");
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+                KeyEvent.VK_PRINTSCREEN, ActionEvent.CTRL_MASK));
 
-	}
+    }
 
-	protected FileNameExtensionFilter getFileNameExtensionFilter() {
-		return new FileNameExtensionFilter("PNG image files", "png");
-	}
+    protected FileNameExtensionFilter getFileNameExtensionFilter() {
+        return new FileNameExtensionFilter("PNG image files", "png");
+    }
 
-	@Override
-	protected void performExport(File file) throws HeadlessException {
+    @Override
+    protected void performExport(File file) throws HeadlessException {
 
-		try {
-			
-			viewerFrame.glCanvas.getContext().makeCurrent();
-			
-			Screenshot.writeToFile(file,
-					viewerFrame.glCanvas.getWidth(),
-					viewerFrame.glCanvas.getHeight());
+        try {
 
-			viewerFrame.glCanvas.getContext().release();
-			
-			messageManager.addMessage("exported PNG file " + file);
+            viewerFrame.glCanvas.getContext().makeCurrent();
 
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(viewerFrame,
-					e.toString(),
-					"Could not export PNG file", JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
-		}
-	}
+            Screenshot.writeToFile(file,
+                    viewerFrame.glCanvas.getWidth(),
+                    viewerFrame.glCanvas.getHeight());
+
+            viewerFrame.glCanvas.getContext().release();
+
+            messageManager.addMessage("exported PNG file " + file);
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(viewerFrame,
+                    e.toString(),
+                    "Could not export PNG file", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
 
 }

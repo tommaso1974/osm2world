@@ -113,7 +113,8 @@ public class MapData {
 
     /**
      * calculates the center from the {@link MapNode}s' positions
-     * @return 
+     *
+     * @return
      */
     public VectorXZ getCenter() {
 
@@ -132,7 +133,8 @@ public class MapData {
 
     /**
      * returns all {@link WorldObject}s from elements in this data set.
-     * @return 
+     *
+     * @return
      */
     public Iterable<WorldObject> getWorldObjects() {
 

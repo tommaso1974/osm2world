@@ -13,25 +13,26 @@ import org.osm2world.core.math.VectorXZ;
  */
 abstract public class ElevationProfile {
 
-	public abstract double getEleAt(VectorXZ pos);
-	
-	public VectorXYZ getWithEle(VectorXZ pos) {
-		return pos.xyz(getEleAt(pos));
-	}
+    public abstract double getEleAt(VectorXZ pos);
 
-	public List<VectorXYZ> getWithEle(List<VectorXZ> posList) {
-		ArrayList<VectorXYZ> result = new ArrayList<VectorXYZ>(posList.size());
-		for (VectorXZ pos : posList) {
-			result.add(getWithEle(pos));
-		}
-		return result;
-	}
+    public VectorXYZ getWithEle(VectorXZ pos) {
+        return pos.xyz(getEleAt(pos));
+    }
 
-	public abstract Collection<VectorXYZ> getPointsWithEle();
-	
-	public abstract double getMinEle();
-	public abstract double getMaxEle();
-	
-	abstract protected MapElement getElement();
+    public List<VectorXYZ> getWithEle(List<VectorXZ> posList) {
+        ArrayList<VectorXYZ> result = new ArrayList<VectorXYZ>(posList.size());
+        for (VectorXZ pos : posList) {
+            result.add(getWithEle(pos));
+        }
+        return result;
+    }
+
+    public abstract Collection<VectorXYZ> getPointsWithEle();
+
+    public abstract double getMinEle();
+
+    public abstract double getMaxEle();
+
+    abstract protected MapElement getElement();
 
 }

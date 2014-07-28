@@ -11,21 +11,20 @@ import org.osm2world.core.target.jogl.JOGLTarget;
  */
 public class EleDebugView extends DebugView {
 
-	@Override
-	public String getDescription() {
-		return "shows points with a color depending on their elevation";
-	}
-	
-	@Override
-	public boolean canBeUsed() {
-		return false;
-	}
-	
-	@Override
-	protected void fillTarget(JOGLTarget target) {
-		
-		//TODO port functionality to new elevation calculation
-		
+    @Override
+    public String getDescription() {
+        return "shows points with a color depending on their elevation";
+    }
+
+    @Override
+    public boolean canBeUsed() {
+        return false;
+    }
+
+    @Override
+    protected void fillTarget(JOGLTarget target) {
+
+        //TODO port functionality to new elevation calculation
 //		/* collect all points */
 //
 //		List<VectorXYZ> points = new ArrayList<VectorXYZ>();
@@ -68,39 +67,37 @@ public class EleDebugView extends DebugView {
 //			drawBoxAround(target, point, color, 0.4f);
 //
 //		}
-		
-	}
+    }
 
-	/**
-	 * chooses a color value from a sequence of linear color gradients
-	 */
-	private Color interpolateGradientColor(float value, Color... colors) {
+    /**
+     * chooses a color value from a sequence of linear color gradients
+     */
+    private Color interpolateGradientColor(float value, Color... colors) {
 
-		assert colors.length > 1;
-		
-		int sections = colors.length - 1;
-		float sectionLength = 1.0f / sections;
-		
-		int sectionOfValue = min(max(
-				(int)( value / sectionLength ), 0), sections-1);
-				
-		return interpolateGradientColor(
-				 (value - sectionLength * sectionOfValue) / sectionLength,
-				 colors[sectionOfValue], colors[sectionOfValue+1]);
-				
-	}
-	
-	/**
-	 * chooses a color value from linear color gradient
-	 */
-	private Color interpolateGradientColor(float value, Color c0, Color c1) {
-		
-		return new Color(
-				round(c0.getRed() * (1 - value) + c1.getRed() * value),
-				round(c0.getGreen() * (1 - value) + c1.getGreen() * value),
-				round(c0.getBlue() * (1 - value) + c1.getBlue() * value));
-		
-	}
+        assert colors.length > 1;
 
-	
+        int sections = colors.length - 1;
+        float sectionLength = 1.0f / sections;
+
+        int sectionOfValue = min(max(
+                (int) (value / sectionLength), 0), sections - 1);
+
+        return interpolateGradientColor(
+                (value - sectionLength * sectionOfValue) / sectionLength,
+                colors[sectionOfValue], colors[sectionOfValue + 1]);
+
+    }
+
+    /**
+     * chooses a color value from linear color gradient
+     */
+    private Color interpolateGradientColor(float value, Color c0, Color c1) {
+
+        return new Color(
+                round(c0.getRed() * (1 - value) + c1.getRed() * value),
+                round(c0.getGreen() * (1 - value) + c1.getGreen() * value),
+                round(c0.getBlue() * (1 - value) + c1.getBlue() * value));
+
+    }
+
 }

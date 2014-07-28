@@ -31,195 +31,191 @@ import org.osm2world.core.world.network.JunctionNodeWorldObject;
  */
 public class RailwayModule extends ConfigurableWorldModule {
 
-	/** accepted values of the railway key */
-	private static final List<String> RAILWAY_VALUES = asList(
-			"rail", "light_rail", "tram", "disused");
-	
-	@Override
-	public void applyTo(MapData grid) {
-		
-		for (MapWaySegment segment : grid.getMapWaySegments()) {
-			if (segment.getTags().containsAny("railway", RAILWAY_VALUES)) {
-				segment.addRepresentation(new Rail(segment));
-			}
-		}
-		
-		//TODO: the following for loop is copied from water module and should be in a common superclass
-		for (MapNode node : grid.getMapNodes()) {
-			
-			int connectedRails = 0;
-			
-			for (MapWaySegment line : node.getConnectedWaySegments()) {
-				if (any(line.getRepresentations(), hasType(Rail.class))) {
-					connectedRails += 1;
-				}
-			}
-			
-			if (connectedRails > 2) {
-				// node.addRepresentation(new RailJunction(node));
-				// TODO: reactivate after implementing proper rendering for rail junctions
-			}
-			
-		}
-		
-	}
-	
-	private static class Rail extends AbstractNetworkWaySegmentWorldObject
-		implements RenderableToAllTargets, TerrainBoundaryWorldObject {
-		
-		private static final float GROUND_WIDTH = 2.25f;
-		private static final float RAIL_DIST = 1.5f;
-	
-		private static final float SLEEPER_WIDTH = 2.0f;
-		private static final float SLEEPER_LENGTH = 0.75f;
-		private static final float SLEEPER_HEIGHT = 0.125f;
-		
-		private static final List<VectorXYZ> RAIL_SHAPE = asList(
-			new VectorXYZ(-0.45f, 0, 0), new VectorXYZ(-0.1f, 0.1f, 0),
-			new VectorXYZ(-0.1f, 0.5f, 0), new VectorXYZ(-0.25f, 0.55f, 0),
-			new VectorXYZ(-0.25f, 0.75f, 0), new VectorXYZ(+0.25f, 0.75f, 0),
-			new VectorXYZ(+0.25f, 0.55f, 0), new VectorXYZ(+0.1f, 0.5f, 0),
-			new VectorXYZ(+0.1f, 0.1f, 0), new VectorXYZ(+0.45f, 0, 0)
-		);
-		
-		static {
-			for (int i=0; i < RAIL_SHAPE.size(); i++) {
-				VectorXYZ v = RAIL_SHAPE.get(i);
-				v = v.mult(0.25f);
-				v = v.y(v.y + SLEEPER_HEIGHT);
-				RAIL_SHAPE.set(i, v);
-			}
-		}
-				
-		public Rail(MapWaySegment segment) {
-			super(segment);
-		}
+    /**
+     * accepted values of the railway key
+     */
+    private static final List<String> RAILWAY_VALUES = asList(
+            "rail", "light_rail", "tram", "disused");
 
-		@Override
-		public void renderTo(Target<?> target) {
+    @Override
+    public void applyTo(MapData grid) {
 
-			/* draw ground */
-			
-			List<VectorXYZ> groundVs = WorldModuleGeometryUtil.createTriangleStripBetween(
-					getOutline(false), getOutline(true));
-			
-			target.drawTriangleStrip(Materials.RAIL_BALLAST_DEFAULT, groundVs,
-					texCoordLists(groundVs, Materials.RAIL_BALLAST_DEFAULT, GLOBAL_X_Z));
-			
-			
-			/* draw rails */
+        for (MapWaySegment segment : grid.getMapWaySegments()) {
+            if (segment.getTags().containsAny("railway", RAILWAY_VALUES)) {
+                segment.addRepresentation(new Rail(segment));
+            }
+        }
 
-			@SuppressWarnings("unchecked")
-			List<VectorXYZ>[] railLines = new List[2];
-			
-			railLines[0] = WorldModuleGeometryUtil.createLineBetween(
-					getOutline(false), getOutline(true),
-					((GROUND_WIDTH - RAIL_DIST) / GROUND_WIDTH) / 2);
+        //TODO: the following for loop is copied from water module and should be in a common superclass
+        for (MapNode node : grid.getMapNodes()) {
 
-			railLines[1] = WorldModuleGeometryUtil.createLineBetween(
-					getOutline(false), getOutline(true),
-					1 - ((GROUND_WIDTH - RAIL_DIST) / GROUND_WIDTH) / 2);
+            int connectedRails = 0;
 
-			for (List<VectorXYZ> railLine : railLines) {
-				
-				List<List<VectorXYZ>> stripVectors =
-					WorldModuleGeometryUtil.createShapeExtrusionAlong(
-					RAIL_SHAPE, railLine,
-					Collections.nCopies(railLine.size(), VectorXYZ.Y_UNIT));
-					
-				for (List<VectorXYZ> stripVector : stripVectors) {
-					target.drawTriangleStrip(Materials.RAIL_DEFAULT, stripVector, null);
-				}
-			
-			}
-			
-			
-			/* draw railway ties/sleepers */
-			
-			List<VectorXZ> sleeperPositions = GeometryUtil.equallyDistributePointsAlong(3, false,
-					getStartWithOffset(), getEndWithOffset());
-						
-			for (VectorXZ sleeperPosition : sleeperPositions) {
-			
-				//TODO interpolate ele, also using additional points inbetween
-				
+            for (MapWaySegment line : node.getConnectedWaySegments()) {
+                if (any(line.getRepresentations(), hasType(Rail.class))) {
+                    connectedRails += 1;
+                }
+            }
+
+            if (connectedRails > 2) {
+                // node.addRepresentation(new RailJunction(node));
+                // TODO: reactivate after implementing proper rendering for rail junctions
+            }
+
+        }
+
+    }
+
+    private static class Rail extends AbstractNetworkWaySegmentWorldObject
+            implements RenderableToAllTargets, TerrainBoundaryWorldObject {
+
+        private static final float GROUND_WIDTH = 2.25f;
+        private static final float RAIL_DIST = 1.5f;
+
+        private static final float SLEEPER_WIDTH = 2.0f;
+        private static final float SLEEPER_LENGTH = 0.75f;
+        private static final float SLEEPER_HEIGHT = 0.125f;
+
+        private static final List<VectorXYZ> RAIL_SHAPE = asList(
+                new VectorXYZ(-0.45f, 0, 0), new VectorXYZ(-0.1f, 0.1f, 0),
+                new VectorXYZ(-0.1f, 0.5f, 0), new VectorXYZ(-0.25f, 0.55f, 0),
+                new VectorXYZ(-0.25f, 0.75f, 0), new VectorXYZ(+0.25f, 0.75f, 0),
+                new VectorXYZ(+0.25f, 0.55f, 0), new VectorXYZ(+0.1f, 0.5f, 0),
+                new VectorXYZ(+0.1f, 0.1f, 0), new VectorXYZ(+0.45f, 0, 0)
+        );
+
+        static {
+            for (int i = 0; i < RAIL_SHAPE.size(); i++) {
+                VectorXYZ v = RAIL_SHAPE.get(i);
+                v = v.mult(0.25f);
+                v = v.y(v.y + SLEEPER_HEIGHT);
+                RAIL_SHAPE.set(i, v);
+            }
+        }
+
+        public Rail(MapWaySegment segment) {
+            super(segment);
+        }
+
+        @Override
+        public void renderTo(Target<?> target) {
+
+            /* draw ground */
+            List<VectorXYZ> groundVs = WorldModuleGeometryUtil.createTriangleStripBetween(
+                    getOutline(false), getOutline(true));
+
+            target.drawTriangleStrip(Materials.RAIL_BALLAST_DEFAULT, groundVs,
+                    texCoordLists(groundVs, Materials.RAIL_BALLAST_DEFAULT, GLOBAL_X_Z));
+
+            /* draw rails */
+            @SuppressWarnings("unchecked")
+            List<VectorXYZ>[] railLines = new List[2];
+
+            railLines[0] = WorldModuleGeometryUtil.createLineBetween(
+                    getOutline(false), getOutline(true),
+                    ((GROUND_WIDTH - RAIL_DIST) / GROUND_WIDTH) / 2);
+
+            railLines[1] = WorldModuleGeometryUtil.createLineBetween(
+                    getOutline(false), getOutline(true),
+                    1 - ((GROUND_WIDTH - RAIL_DIST) / GROUND_WIDTH) / 2);
+
+            for (List<VectorXYZ> railLine : railLines) {
+
+                List<List<VectorXYZ>> stripVectors
+                        = WorldModuleGeometryUtil.createShapeExtrusionAlong(
+                                RAIL_SHAPE, railLine,
+                                Collections.nCopies(railLine.size(), VectorXYZ.Y_UNIT));
+
+                for (List<VectorXYZ> stripVector : stripVectors) {
+                    target.drawTriangleStrip(Materials.RAIL_DEFAULT, stripVector, null);
+                }
+
+            }
+
+            /* draw railway ties/sleepers */
+            List<VectorXZ> sleeperPositions = GeometryUtil.equallyDistributePointsAlong(3, false,
+                    getStartWithOffset(), getEndWithOffset());
+
+            for (VectorXZ sleeperPosition : sleeperPositions) {
+
+                //TODO interpolate ele, also using additional points inbetween
 //				VectorXYZ sleeperPositionXYZ =
 //						segment.getElevationProfile().getWithEle(sleeperPosition);
 //
 //				target.drawBox(Materials.RAIL_SLEEPER_DEFAULT,
 //						sleeperPositionXYZ, segment.getDirection(),
 //						SLEEPER_HEIGHT, SLEEPER_WIDTH, SLEEPER_LENGTH);
-				
-			}
-			
-		}
+            }
 
-		@Override
-		public float getWidth() {
-			return GROUND_WIDTH;
-		}
-		
-	}
-	
-	public static class RailJunction
-		extends JunctionNodeWorldObject
-		implements RenderableToAllTargets, TerrainBoundaryWorldObject {
-		
-		public RailJunction(MapNode node) {
-			super(node);
-		}
+        }
 
-		@Override
-		public GroundState getGroundState() {
-			//TODO (code duplication): copied from RoadModule
-			GroundState currentGroundState = null;
-			checkEachLine: {
-				for (MapWaySegment line : this.node.getConnectedWaySegments()) {
-					if (line.getPrimaryRepresentation() == null) continue;
-					GroundState lineGroundState = line.getPrimaryRepresentation().getGroundState();
-					if (currentGroundState == null) {
-						currentGroundState = lineGroundState;
-					} else if (currentGroundState != lineGroundState) {
-						currentGroundState = GroundState.ON;
-						break checkEachLine;
-					}
-				}
-			}
-			return currentGroundState;
-		}
-		
-		@Override
-		public void renderTo(Target<?> target) {
-			
-			if (getOutlinePolygon() == null) return;
-			
-			/* draw ground */
+        @Override
+        public float getWidth() {
+            return GROUND_WIDTH;
+        }
 
-			List<VectorXYZ> vectors = getOutlinePolygon().getVertexLoop();
+    }
 
-			Material material = Materials.RAIL_BALLAST_DEFAULT;
-			
-			target.drawConvexPolygon(material, vectors,
-					texCoordLists(vectors, material, GLOBAL_X_Z));
+    public static class RailJunction
+            extends JunctionNodeWorldObject
+            implements RenderableToAllTargets, TerrainBoundaryWorldObject {
 
-			/* draw connection between each pair of rails */
+        public RailJunction(MapNode node) {
+            super(node);
+        }
 
-			/* TODO: use node.getConnectedLines() instead?
-			 * (allows access to information from there,
-			 *  such as getOutline!)
-			 */
+        @Override
+        public GroundState getGroundState() {
+            //TODO (code duplication): copied from RoadModule
+            GroundState currentGroundState = null;
+            checkEachLine:
+            {
+                for (MapWaySegment line : this.node.getConnectedWaySegments()) {
+                    if (line.getPrimaryRepresentation() == null) {
+                        continue;
+                    }
+                    GroundState lineGroundState = line.getPrimaryRepresentation().getGroundState();
+                    if (currentGroundState == null) {
+                        currentGroundState = lineGroundState;
+                    } else if (currentGroundState != lineGroundState) {
+                        currentGroundState = GroundState.ON;
+                        break checkEachLine;
+                    }
+                }
+            }
+            return currentGroundState;
+        }
 
-			for (int i=0; i<cutCenters.size(); i++) {
-				for (int j=0; j<i; j++) {
+        @Override
+        public void renderTo(Target<?> target) {
 
-					/* connect those rails with an obtuse angle between them */
+            if (getOutlinePolygon() == null) {
+                return;
+            }
 
+            /* draw ground */
+            List<VectorXYZ> vectors = getOutlinePolygon().getVertexLoop();
 
-				}
-			}
-			
-		}
+            Material material = Materials.RAIL_BALLAST_DEFAULT;
 
-	}
-	
+            target.drawConvexPolygon(material, vectors,
+                    texCoordLists(vectors, material, GLOBAL_X_Z));
+
+            /* draw connection between each pair of rails */
+
+            /* TODO: use node.getConnectedLines() instead?
+             * (allows access to information from there,
+             *  such as getOutline!)
+             */
+            for (int i = 0; i < cutCenters.size(); i++) {
+                for (int j = 0; j < i; j++) {
+
+                    /* connect those rails with an obtuse angle between them */
+                }
+            }
+
+        }
+
+    }
+
 }

@@ -152,7 +152,7 @@ public class VectorXZ implements Vector3D {
         return result;
     }
 
-	//TODO: angle bisection as method in this class
+    //TODO: angle bisection as method in this class
     /**
      * returns a unit vector based on an angular direction. For example, angle 0
      * creates vector (0,1), angle PI/2 creates vector (1,0).

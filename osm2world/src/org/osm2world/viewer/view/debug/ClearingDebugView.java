@@ -10,29 +10,28 @@ import org.osm2world.core.target.jogl.JOGLTarget;
  */
 public class ClearingDebugView extends DebugView {
 
-	private static final int LINE_WIDTH = 5;
-	private static final float HALF_NODE_WIDTH = 0.4f;
-	private static final int NODE_COLUMN_WIDTH = 5;
-	
-	private static final Color LINE_SURFACE_COLOR = Color.LIGHT_GRAY;
-	private static final Color LINE_BELOW_COLOR = Color.YELLOW;
-	private static final Color LINE_ABOVE_COLOR = Color.BLUE;
+    private static final int LINE_WIDTH = 5;
+    private static final float HALF_NODE_WIDTH = 0.4f;
+    private static final int NODE_COLUMN_WIDTH = 5;
 
-	@Override
-	public String getDescription() {
-		return "shows information from elevation calculation";
-	}
-	
-	@Override
-	public boolean canBeUsed() {
-		return map != null;
-	}
-	
-	@Override
-	public void fillTarget(JOGLTarget target) {
-		
-		//TODO useless for new elevation calculation
-		
+    private static final Color LINE_SURFACE_COLOR = Color.LIGHT_GRAY;
+    private static final Color LINE_BELOW_COLOR = Color.YELLOW;
+    private static final Color LINE_ABOVE_COLOR = Color.BLUE;
+
+    @Override
+    public String getDescription() {
+        return "shows information from elevation calculation";
+    }
+
+    @Override
+    public boolean canBeUsed() {
+        return map != null;
+    }
+
+    @Override
+    public void fillTarget(JOGLTarget target) {
+
+        //TODO useless for new elevation calculation
 //		for (MapWaySegment line : map.getMapWaySegments()) {
 //
 //			for (WorldObject rep : line.getRepresentations()) {
@@ -103,45 +102,44 @@ public class ClearingDebugView extends DebugView {
 //			}
 //
 //		}
+    }
 
-	}
-	
-	private static Color getColorForState(GroundState state) {
-		if (state == GroundState.ABOVE) {
-			return LINE_ABOVE_COLOR;
-		} else if (state == GroundState.BELOW) {
-			return LINE_BELOW_COLOR;
-		} else {
-			return LINE_SURFACE_COLOR;
-		}
-	}
-		
-	private static final byte STIPPLE_PATTERN[] =
-	  { (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88,
-	    (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x11, (byte) 0x11,
-	    (byte) 0x11, (byte) 0x11, (byte) 0x88, (byte) 0x88, (byte) 0x88,
-	    (byte) 0x88, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11,
-	    (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x11,
-	    (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88, (byte) 0x88,
-	    (byte) 0x88, (byte) 0x88, (byte) 0x11, (byte) 0x11, (byte) 0x11,
-	    (byte) 0x11, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88,
-	    (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88,
-	    (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x11, (byte) 0x11,
-	    (byte) 0x11, (byte) 0x11, (byte) 0x88, (byte) 0x88, (byte) 0x88,
-	    (byte) 0x88, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11,
-	    (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x11,
-	    (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88, (byte) 0x88,
-	    (byte) 0x88, (byte) 0x88, (byte) 0x11, (byte) 0x11, (byte) 0x11,
-	    (byte) 0x11, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88,
-	    (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88,
-	    (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x11, (byte) 0x11,
-	    (byte) 0x11, (byte) 0x11, (byte) 0x88, (byte) 0x88, (byte) 0x88,
-	    (byte) 0x88, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11,
-	    (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x11,
-	    (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88, (byte) 0x88,
-	    (byte) 0x88, (byte) 0x88, (byte) 0x11, (byte) 0x11, (byte) 0x11,
-	    (byte) 0x11, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88,
-	    (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88,
-	    (byte) 0x88, (byte) 0x88, (byte) 0x88 };
-	
+    private static Color getColorForState(GroundState state) {
+        if (state == GroundState.ABOVE) {
+            return LINE_ABOVE_COLOR;
+        } else if (state == GroundState.BELOW) {
+            return LINE_BELOW_COLOR;
+        } else {
+            return LINE_SURFACE_COLOR;
+        }
+    }
+
+    private static final byte STIPPLE_PATTERN[]
+            = {(byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88,
+                (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x11, (byte) 0x11,
+                (byte) 0x11, (byte) 0x11, (byte) 0x88, (byte) 0x88, (byte) 0x88,
+                (byte) 0x88, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11,
+                (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x11,
+                (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88, (byte) 0x88,
+                (byte) 0x88, (byte) 0x88, (byte) 0x11, (byte) 0x11, (byte) 0x11,
+                (byte) 0x11, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88,
+                (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88,
+                (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x11, (byte) 0x11,
+                (byte) 0x11, (byte) 0x11, (byte) 0x88, (byte) 0x88, (byte) 0x88,
+                (byte) 0x88, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11,
+                (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x11,
+                (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88, (byte) 0x88,
+                (byte) 0x88, (byte) 0x88, (byte) 0x11, (byte) 0x11, (byte) 0x11,
+                (byte) 0x11, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88,
+                (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88,
+                (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x11, (byte) 0x11,
+                (byte) 0x11, (byte) 0x11, (byte) 0x88, (byte) 0x88, (byte) 0x88,
+                (byte) 0x88, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11,
+                (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x11,
+                (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88, (byte) 0x88,
+                (byte) 0x88, (byte) 0x88, (byte) 0x11, (byte) 0x11, (byte) 0x11,
+                (byte) 0x11, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88,
+                (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x11, (byte) 0x88,
+                (byte) 0x88, (byte) 0x88, (byte) 0x88};
+
 }

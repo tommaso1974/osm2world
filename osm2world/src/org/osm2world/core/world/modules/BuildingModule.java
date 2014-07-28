@@ -198,7 +198,7 @@ public class BuildingModule extends ConfigurableWorldModule {
             /* add constraints between entrances with different levels */
             for (BuildingPart part : parts) {
 
-				// add vertical distances
+                // add vertical distances
                 for (int i = 0; i < part.entrances.size(); i++) {
 
                     BuildingEntrance e1 = part.entrances.get(i);
@@ -225,7 +225,7 @@ public class BuildingModule extends ConfigurableWorldModule {
 
                     }
 
-					// collect entrances for next step
+                    // collect entrances for next step
                     if (e1.getLevel() == 0 && e1.getGroundState() == ON) {
                         groundLevelEntrances.add(e1.connector);
                     }
@@ -244,7 +244,7 @@ public class BuildingModule extends ConfigurableWorldModule {
 
         }
 
-		//TODO
+        //TODO
 //		@Override
 //		public double getClearingAbove(VectorXZ pos) {
 //			double maxClearingAbove = 0;
@@ -407,7 +407,7 @@ public class BuildingModule extends ConfigurableWorldModule {
 
                     if (o instanceof WaySegmentWorldObject) {
 
-						// extend the subtract polygon for segments that end
+                        // extend the subtract polygon for segments that end
                         // at a common node with this building part's outline.
                         // (otherwise, the subtract polygon will probably
                         // not exactly line up with the polygon boundary)
@@ -584,7 +584,7 @@ public class BuildingModule extends ConfigurableWorldModule {
 
                     double s, lowerT, middleT;
 
-					// determine s (width dimension) coordinate
+                    // determine s (width dimension) coordinate
                     if (textureData.height > 0) {
                         s = accumulatedLength / textureData.width;
                     } else {
@@ -598,7 +598,7 @@ public class BuildingModule extends ConfigurableWorldModule {
 
                     previousS[texLayer] = s;
 
-					// determine t (height dimension) coordinates
+                    // determine t (height dimension) coordinates
                     if (textureData.height > 0) {
 
                         lowerT = (floorEle - baseEle) / textureData.height;
@@ -612,7 +612,7 @@ public class BuildingModule extends ConfigurableWorldModule {
 
                     }
 
-					// set texture coordinates
+                    // set texture coordinates
                     texCoordList.add(new VectorXZ(s, middleT));
                     texCoordList.add(new VectorXZ(s, lowerT));
 
@@ -771,8 +771,8 @@ public class BuildingModule extends ConfigurableWorldModule {
             heightWithoutRoof = height - roof.getRoofHeight();
 
             //TODO tommaso agendo su queste variabili andiamo a bruciare la 3° dimensione
-           // heightWithoutRoof = 0;
-           // height=0;
+            // heightWithoutRoof = 0;
+            // height=0;
             //TODO tommaso
             /* determine materials */
             if (defaultMaterialRoof == Materials.ROOF_DEFAULT
@@ -799,7 +799,7 @@ public class BuildingModule extends ConfigurableWorldModule {
             }
 
             if (materialWall == Materials.GLASS) {
-				// avoid placing windows into a glass front
+                // avoid placing windows into a glass front
                 // TODO: the == currently only works if GLASS is not colorable
                 defaultMaterialWindows = null;
             }
@@ -1231,8 +1231,8 @@ public class BuildingModule extends ConfigurableWorldModule {
                     return ele;
                 } else {
 
-					// get all segments from the roof
-					//TODO (performance): avoid doing this for every node
+                    // get all segments from the roof
+                    //TODO (performance): avoid doing this for every node
                     Collection<LineSegmentXZ> segments
                             = new ArrayList<LineSegmentXZ>();
 
@@ -1242,7 +1242,7 @@ public class BuildingModule extends ConfigurableWorldModule {
                         segments.addAll(hole.getSegments());
                     }
 
-					// find the segment with the closest distance to the node
+                    // find the segment with the closest distance to the node
                     LineSegmentXZ closestSegment = null;
                     double closestSegmentDistance = Double.MAX_VALUE;
 
@@ -1254,7 +1254,7 @@ public class BuildingModule extends ConfigurableWorldModule {
                         }
                     }
 
-					// use that segment for height interpolation
+                    // use that segment for height interpolation
                     return interpolateValue(v,
                             closestSegment.p1,
                             getRoofEleAt_noInterpolation(closestSegment.p1),
@@ -1792,7 +1792,7 @@ public class BuildingModule extends ConfigurableWorldModule {
                 newOuter = insertIntoPolygon(newOuter, cap2part.p1, 0.2);
                 newOuter = insertIntoPolygon(newOuter, cap2part.p2, 0.2);
 
-				//TODO: add intersections of additional edges with outline?
+                //TODO: add intersections of additional edges with outline?
                 return new PolygonWithHolesXZ(
                         newOuter.asSimplePolygon(),
                         polygon.getHoles());
@@ -2038,7 +2038,7 @@ public class BuildingModule extends ConfigurableWorldModule {
 
                         boolean inside = polygon.contains(waySegment.getCenter());
 
-						// check also endpoints as pnpoly algo is not reliable when
+                        // check also endpoints as pnpoly algo is not reliable when
                         // segment lies on the polygon edge
                         boolean containsStart = nodes.contains(waySegment.getStartNode());
                         boolean containsEnd = nodes.contains(waySegment.getEndNode());

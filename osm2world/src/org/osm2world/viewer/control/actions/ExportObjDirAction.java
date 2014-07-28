@@ -15,57 +15,56 @@ import org.osm2world.viewer.view.ViewerFrame;
 
 public class ExportObjDirAction extends AbstractExportAction {
 
-	public ExportObjDirAction(ViewerFrame viewerFrame, Data data,
-			MessageManager messageManager, RenderOptions renderOptions) {
+    public ExportObjDirAction(ViewerFrame viewerFrame, Data data,
+            MessageManager messageManager, RenderOptions renderOptions) {
 
-		super("Export OBJ directory", viewerFrame, data, messageManager, renderOptions);
-		putValue(SHORT_DESCRIPTION, "Writes several smaller Wavefront .obj files to a directory");
-		
-	}
-	
-	@Override
-	protected boolean chooseDirectory() {
-		return true;
-	}
-	
-	protected FileNameExtensionFilter getFileNameExtensionFilter() {
-		return null;
-	}
+        super("Export OBJ directory", viewerFrame, data, messageManager, renderOptions);
+        putValue(SHORT_DESCRIPTION, "Writes several smaller Wavefront .obj files to a directory");
 
-	@Override
-	protected void performExport(File file) throws HeadlessException {
+    }
 
-		try {
-			
-			String thresholdString = JOptionPane.showInputDialog(
-					viewerFrame, "Graphics primitives per file", 10000);
-			
-			int primitiveThresholdPerFile = Integer.parseInt(thresholdString);
-			
-			/* write the file */
+    @Override
+    protected boolean chooseDirectory() {
+        return true;
+    }
 
-			ObjWriter.writeObjFiles(
-					file,
-					data.getConversionResults().getMapData(),
-					data.getConversionResults().getMapProjection(),
-					null, renderOptions.projection,
-					primitiveThresholdPerFile);
+    protected FileNameExtensionFilter getFileNameExtensionFilter() {
+        return null;
+    }
 
-			messageManager.addMessage("exported Wavefront .obj file " + file);
+    @Override
+    protected void performExport(File file) throws HeadlessException {
 
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(viewerFrame,
-					e.toString(),
-					"Could not export Wavefront .obj file",
-					JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
-		} catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(viewerFrame,
-					e.toString(),
-					"please enter a valid number of primitives per file",
-					JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
-		}
-	}
+        try {
+
+            String thresholdString = JOptionPane.showInputDialog(
+                    viewerFrame, "Graphics primitives per file", 10000);
+
+            int primitiveThresholdPerFile = Integer.parseInt(thresholdString);
+
+            /* write the file */
+            ObjWriter.writeObjFiles(
+                    file,
+                    data.getConversionResults().getMapData(),
+                    data.getConversionResults().getMapProjection(),
+                    null, renderOptions.projection,
+                    primitiveThresholdPerFile);
+
+            messageManager.addMessage("exported Wavefront .obj file " + file);
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(viewerFrame,
+                    e.toString(),
+                    "Could not export Wavefront .obj file",
+                    JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(viewerFrame,
+                    e.toString(),
+                    "please enter a valid number of primitives per file",
+                    JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
 
 }

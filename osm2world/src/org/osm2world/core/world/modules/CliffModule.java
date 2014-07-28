@@ -26,137 +26,138 @@ import org.osm2world.core.world.modules.common.ConfigurableWorldModule;
 import org.osm2world.core.world.network.AbstractNetworkWaySegmentWorldObject;
 
 /**
- * adds cliffs and retaining walls to the world.
- * Their common property is that they offset terrain elevation.
+ * adds cliffs and retaining walls to the world. Their common property is that
+ * they offset terrain elevation.
  */
 public class CliffModule extends ConfigurableWorldModule {
-	
-	@Override
-	public void applyTo(MapData grid) {
-		
-		for (MapWaySegment segment : grid.getMapWaySegments()) {
-			
-			if (segment.getTags().contains("natural", "cliff")) {
-				segment.addRepresentation(new Cliff(segment));
-			} else if (segment.getTags().contains("barrier", "retaining_wall")) {
-				segment.addRepresentation(new RetainingWall(segment));
-			}
-			
-		}
-		
-	}
-	
-	private static int getConnectedCliffs(MapNode node) {
-		
-		int result = 0;
-		
-		for (MapWaySegment segment : node.getConnectedWaySegments()) {
-			if (any(segment.getRepresentations(), hasType(Cliff.class))) {
-				result += 1;
-			}
-		}
-		
-		return result;
-		
-	}
-	
-	private abstract static class AbstractCliff
-			extends AbstractNetworkWaySegmentWorldObject
-			implements TerrainBoundaryWorldObject, RenderableToAllTargets {
-		
-		protected AbstractCliff(MapWaySegment segment) {
-			super(segment);
-		}
 
-		protected abstract float getDefaultWidth();
-		
-		protected abstract Material getMaterial();
-		
-		@Override
-		public float getWidth() {
-			return parseWidth(segment.getTags(), getDefaultWidth());
-		}
-		
-		@Override
-		public GroundState getGroundState() {
-			return GroundState.ON;
-		}
-		
-		@Override
-		public void defineEleConstraints(EleConstraintEnforcer enforcer) {
-			
-			double height = parseHeight(segment.getTags(), 5);
-			
-			if (isBroken()) return;
-			
-			/* add vertical offset between left and right connectors */
-			
-			List<EleConnector> center = getCenterlineEleConnectors();
-			List<EleConnector> left = connectors.getConnectors(getOutlineXZ(false));
-			List<EleConnector> right = connectors.getConnectors(getOutlineXZ(true));
-			
-			for (int i = 0; i < center.size(); i++) {
-				
-				// the ends of the cliff may be much lower
-				if ((i != 0 || getConnectedCliffs(segment.getStartNode()) > 1)
-						&& (i != center.size() - 1 || getConnectedCliffs(segment.getEndNode()) > 1)) {
-					
-					enforcer.requireVerticalDistance(
-							MIN, height, left.get(i), right.get(i));
-					
-				}
-				
-			}
-			
-		}
-		
-		@Override
-		public void renderTo(Target<?> target) {
-			
-			List<VectorXYZ> groundVs = createTriangleStripBetween(
-					getOutline(false), getOutline(true));
-			
-			target.drawTriangleStrip(getMaterial(), groundVs,
-					texCoordLists(groundVs, Materials.RAIL_BALLAST_DEFAULT, GLOBAL_X_Z));
-			
-		}
-		
-	}
-	
-	public static class Cliff extends AbstractCliff {
+    @Override
+    public void applyTo(MapData grid) {
 
-		protected Cliff(MapWaySegment segment) {
-			super(segment);
-		}
+        for (MapWaySegment segment : grid.getMapWaySegments()) {
 
-		@Override
-		protected float getDefaultWidth() {
-			return 1.0f;
-		}
+            if (segment.getTags().contains("natural", "cliff")) {
+                segment.addRepresentation(new Cliff(segment));
+            } else if (segment.getTags().contains("barrier", "retaining_wall")) {
+                segment.addRepresentation(new RetainingWall(segment));
+            }
 
-		@Override
-		protected Material getMaterial() {
-			return Materials.EARTH;
-		}
-		
-	}
-	
-	public static class RetainingWall extends AbstractCliff {
+        }
 
-		protected RetainingWall(MapWaySegment segment) {
-			super(segment);
-		}
+    }
 
-		@Override
-		protected float getDefaultWidth() {
-			return 1.0f;
-		}
+    private static int getConnectedCliffs(MapNode node) {
 
-		@Override
-		protected Material getMaterial() {
-			return Materials.CONCRETE;
-		}
-		
-	}
-	
+        int result = 0;
+
+        for (MapWaySegment segment : node.getConnectedWaySegments()) {
+            if (any(segment.getRepresentations(), hasType(Cliff.class))) {
+                result += 1;
+            }
+        }
+
+        return result;
+
+    }
+
+    private abstract static class AbstractCliff
+            extends AbstractNetworkWaySegmentWorldObject
+            implements TerrainBoundaryWorldObject, RenderableToAllTargets {
+
+        protected AbstractCliff(MapWaySegment segment) {
+            super(segment);
+        }
+
+        protected abstract float getDefaultWidth();
+
+        protected abstract Material getMaterial();
+
+        @Override
+        public float getWidth() {
+            return parseWidth(segment.getTags(), getDefaultWidth());
+        }
+
+        @Override
+        public GroundState getGroundState() {
+            return GroundState.ON;
+        }
+
+        @Override
+        public void defineEleConstraints(EleConstraintEnforcer enforcer) {
+
+            double height = parseHeight(segment.getTags(), 5);
+
+            if (isBroken()) {
+                return;
+            }
+
+            /* add vertical offset between left and right connectors */
+            List<EleConnector> center = getCenterlineEleConnectors();
+            List<EleConnector> left = connectors.getConnectors(getOutlineXZ(false));
+            List<EleConnector> right = connectors.getConnectors(getOutlineXZ(true));
+
+            for (int i = 0; i < center.size(); i++) {
+
+                // the ends of the cliff may be much lower
+                if ((i != 0 || getConnectedCliffs(segment.getStartNode()) > 1)
+                        && (i != center.size() - 1 || getConnectedCliffs(segment.getEndNode()) > 1)) {
+
+                    enforcer.requireVerticalDistance(
+                            MIN, height, left.get(i), right.get(i));
+
+                }
+
+            }
+
+        }
+
+        @Override
+        public void renderTo(Target<?> target) {
+
+            List<VectorXYZ> groundVs = createTriangleStripBetween(
+                    getOutline(false), getOutline(true));
+
+            target.drawTriangleStrip(getMaterial(), groundVs,
+                    texCoordLists(groundVs, Materials.RAIL_BALLAST_DEFAULT, GLOBAL_X_Z));
+
+        }
+
+    }
+
+    public static class Cliff extends AbstractCliff {
+
+        protected Cliff(MapWaySegment segment) {
+            super(segment);
+        }
+
+        @Override
+        protected float getDefaultWidth() {
+            return 1.0f;
+        }
+
+        @Override
+        protected Material getMaterial() {
+            return Materials.EARTH;
+        }
+
+    }
+
+    public static class RetainingWall extends AbstractCliff {
+
+        protected RetainingWall(MapWaySegment segment) {
+            super(segment);
+        }
+
+        @Override
+        protected float getDefaultWidth() {
+            return 1.0f;
+        }
+
+        @Override
+        protected Material getMaterial() {
+            return Materials.CONCRETE;
+        }
+
+    }
+
 }

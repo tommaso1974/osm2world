@@ -11,7 +11,6 @@ import org.junit.Test;
 public class ValueStringParserTest {
 
     /* speed */
-
     @Test
     public void testParseSpeedDefault() {
         assertClose(50, parseSpeed("50"));
@@ -35,7 +34,6 @@ public class ValueStringParserTest {
     }
 
     /* measure */
-
     @Test
     public void testParseMeasureDefault() {
         assertClose(3.5f, parseMeasure("3.5"));
@@ -71,7 +69,6 @@ public class ValueStringParserTest {
     }
 
     /* weight */
-
     @Test
     public void testParseWeightDefault() {
         assertClose(3.6f, parseWeight("3.6"));
@@ -89,16 +86,15 @@ public class ValueStringParserTest {
     }
 
     /* angle */
-
     @Test
     public void testParseAngleDefault() {
-        assertClose( 47, parseAngle("47"));
-        assertClose(  0, parseAngle("360"));
+        assertClose(47, parseAngle("47"));
+        assertClose(0, parseAngle("360"));
     }
 
     @Test
     public void testParseAngleLetters() {
-        assertClose(  0.0f, parseAngle("N"));
+        assertClose(0.0f, parseAngle("N"));
         assertClose(225.0f, parseAngle("SW"));
         assertClose(112.5f, parseAngle("ESE"));
     }
@@ -108,21 +104,20 @@ public class ValueStringParserTest {
         assertNull(parseAngle("forward"));
         assertNull(parseAngle("-90"));
     }
-    
+
     @Test
     public void testParseColorDefault() {
-    	assertEquals(new Color(255, 0, 0), parseColor("#ff0000"));
-    	assertEquals(new Color(1, 2, 3), parseColor("#010203"));
+        assertEquals(new Color(255, 0, 0), parseColor("#ff0000"));
+        assertEquals(new Color(1, 2, 3), parseColor("#010203"));
     }
-    
+
     @Test
     public void testParseColorInvalid() {
-    	assertNull(parseColor("ff0000"));
-    	assertNull(parseColor("#"));
+        assertNull(parseColor("ff0000"));
+        assertNull(parseColor("#"));
     }
-    
+
     /* utility methods for testing */
-    
     private static final void assertClose(float expected, float actual) {
         if (Math.abs(expected - actual) > 0.001) {
             throw new AssertionError("expected " + expected + ", was " + actual);

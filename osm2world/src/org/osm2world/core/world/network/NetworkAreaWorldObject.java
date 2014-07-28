@@ -5,8 +5,8 @@ import org.osm2world.core.world.data.AbstractAreaWorldObject;
 
 public abstract class NetworkAreaWorldObject extends AbstractAreaWorldObject {
 
-	public NetworkAreaWorldObject(MapArea area) {
-		super(area);
-	}
+    public NetworkAreaWorldObject(MapArea area) {
+        super(area);
+    }
 
 }

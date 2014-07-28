@@ -21,220 +21,221 @@ import org.osm2world.core.target.common.rendering.OrthoTilesUtil.CardinalDirecti
 import org.osm2world.core.target.common.rendering.Projection;
 
 /**
- * renders the contents of a {@link PrimitiveBuffer} using JOGL.
- * Uses display lists to speed up the process.
- * 
+ * renders the contents of a {@link PrimitiveBuffer} using JOGL. Uses display
+ * lists to speed up the process.
+ *
  * If you don't need the renderer anymore, it's recommended to manually call
  * {@link #freeResources()} to delete the display lists. Otherwise, this will
  * not be done before a destructor call.
  */
 class JOGLRendererDisplayList extends JOGLRenderer {
-	
-	/** pointer to the display list with static, non-transparent geometry */
-	private Integer displayListPointer;
-	
-	/** transparent primitives, need to be sorted by distance from camera */
-	private List<PrimitiveWithMaterial> transparentPrimitives =
-			new ArrayList<PrimitiveWithMaterial>();
-	
-	/**
-	 * the camera direction that was the basis for the previous sorting
-	 * of {@link #transparentPrimitives}.
-	 */
-	private CardinalDirection currentPrimitiveSortDirection = null;
-	
-	private static final class PrimitiveWithMaterial {
-		
-		public final Primitive primitive;
-		public final Material material;
-		
-		private PrimitiveWithMaterial(Primitive primitive, Material material) {
-			this.primitive = primitive;
-			this.material = material;
-		}
-		
-	}
-	
-	public JOGLRendererDisplayList(GL2 gl, JOGLTextureManager textureManager,
-			PrimitiveBuffer primitiveBuffer) {
-		
-		super(gl, textureManager);
-		
-		displayListPointer = gl.glGenLists(1);
-		
-		gl.glNewList(displayListPointer, GL_COMPILE);
 
-		for (Material material : primitiveBuffer.getMaterials()) {
-			
-			if (material.getTransparency() == Transparency.TRUE) {
-				
-				for (Primitive primitive : primitiveBuffer.getPrimitives(material)) {
-					transparentPrimitives.add(
-							new PrimitiveWithMaterial(primitive, material));
-				}
-				
-			} else {
-				
-				JOGLTarget.setMaterial(gl, material, textureManager);
-	
-				for (Primitive primitive : primitiveBuffer.getPrimitives(material)) {
-					drawPrimitive(gl, getGLConstant(primitive.type),
-							primitive.vertices, primitive.normals,
-							primitive.texCoordLists);
-				}
-				
-			}
-			
-		}
+    /**
+     * pointer to the display list with static, non-transparent geometry
+     */
+    private Integer displayListPointer;
 
-		gl.glEndList();
-		
-	}
+    /**
+     * transparent primitives, need to be sorted by distance from camera
+     */
+    private List<PrimitiveWithMaterial> transparentPrimitives
+            = new ArrayList<PrimitiveWithMaterial>();
 
-	@Override
-	public void render(final Camera camera, final Projection projection) {
-		
-		/* render static geometry */
-		
-		if (displayListPointer == null)
-			throw new IllegalStateException("display list has been deleted");
-		
-		gl.glCallList(displayListPointer);
-		
-		/* render transparent primitives back-to-front */
+    /**
+     * the camera direction that was the basis for the previous sorting of
+     * {@link #transparentPrimitives}.
+     */
+    private CardinalDirection currentPrimitiveSortDirection = null;
 
-		sortPrimitivesBackToFront(camera, projection);
-		
-		Material previousMaterial = null;
-		
-		for (PrimitiveWithMaterial p : transparentPrimitives) {
-			
-			if (!p.material.equals(previousMaterial)) {
-				JOGLTarget.setMaterial(gl, p.material, textureManager);
-				previousMaterial = p.material;
-			}
-			
-			drawPrimitive(gl, getGLConstant(p.primitive.type),
-					p.primitive.vertices, p.primitive.normals,
-					p.primitive.texCoordLists);
-			
-		}
-		
-	}
+    private static final class PrimitiveWithMaterial {
 
-	private void sortPrimitivesBackToFront(final Camera camera,
-			final Projection projection) {
-		
-		if (projection.isOrthographic() &&
-				abs(camera.getViewDirection().xz().angle() % (PI/2)) < 0.01 ) {
-			
-			/* faster sorting for cardinal directions */
-			
-			CardinalDirection closestCardinal = closestCardinal(camera.getViewDirection().xz().angle());
-			
-			if (closestCardinal.isOppositeOf(currentPrimitiveSortDirection)) {
-			
-				Collections.reverse(transparentPrimitives);
-				
-			} else if (closestCardinal != currentPrimitiveSortDirection) {
-					
-				Comparator<PrimitiveWithMaterial> comparator = null;
-				
-				switch(closestCardinal) {
-				
-				case N:
-					comparator = new Comparator<PrimitiveWithMaterial>() {
-						@Override
-						public int compare(PrimitiveWithMaterial p1, PrimitiveWithMaterial p2) {
-							return Double.compare(primitivePos(p2).z, primitivePos(p1).z);
-						}
-					};
-					break;
-				
-				case E:
-					comparator = new Comparator<PrimitiveWithMaterial>() {
-						@Override
-						public int compare(PrimitiveWithMaterial p1, PrimitiveWithMaterial p2) {
-							return Double.compare(primitivePos(p2).x, primitivePos(p1).x);
-						}
-					};
-					break;
-					
-				case S:
-					comparator = new Comparator<PrimitiveWithMaterial>() {
-						@Override
-						public int compare(PrimitiveWithMaterial p1, PrimitiveWithMaterial p2) {
-							return Double.compare(primitivePos(p1).z, primitivePos(p2).z);
-						}
-					};
-					break;
-					
-				case W:
-					comparator = new Comparator<PrimitiveWithMaterial>() {
-						@Override
-						public int compare(PrimitiveWithMaterial p1, PrimitiveWithMaterial p2) {
-							return Double.compare(primitivePos(p1).x, primitivePos(p2).x);
-						}
-					};
-					break;
-					
-				}
-				
-				Collections.sort(transparentPrimitives, comparator);
-				
-			}
-				
-			currentPrimitiveSortDirection = closestCardinal;
-			
-		} else {
-			
-			/* sort based on distance to camera */
-			
-			Collections.sort(transparentPrimitives, new Comparator<PrimitiveWithMaterial>() {
-				@Override
-				public int compare(PrimitiveWithMaterial p1, PrimitiveWithMaterial p2) {
-					return Double.compare(
-							distanceToCameraSq(camera, p2),
-							distanceToCameraSq(camera, p1));
-				}
-			});
-			
-			currentPrimitiveSortDirection = null;
-			
-		}
-		
-	}
+        public final Primitive primitive;
+        public final Material material;
 
-	private double distanceToCameraSq(Camera camera, PrimitiveWithMaterial p) {
-		return primitivePos(p).distanceToSquared(camera.getPos());
-	}
-	
-	private VectorXYZ primitivePos(PrimitiveWithMaterial p) {
-		
-		double sumX = 0, sumY = 0, sumZ = 0;
-		
-		for (VectorXYZ v : p.primitive.vertices) {
-			sumX += v.x;
-			sumY += v.y;
-			sumZ += v.z;
-		}
-		
-		return new VectorXYZ(sumX / p.primitive.vertices.size(),
-				sumY / p.primitive.vertices.size(),
-				sumZ / p.primitive.vertices.size());
-		
-	}
-	
-	@Override
-	public void freeResources() {
-		
-		if (displayListPointer != null) {
-			gl.glDeleteLists(displayListPointer, 1);
-			displayListPointer = null;
-		}
+        private PrimitiveWithMaterial(Primitive primitive, Material material) {
+            this.primitive = primitive;
+            this.material = material;
+        }
 
-		super.freeResources();
-		
-	}
-	
+    }
+
+    public JOGLRendererDisplayList(GL2 gl, JOGLTextureManager textureManager,
+            PrimitiveBuffer primitiveBuffer) {
+
+        super(gl, textureManager);
+
+        displayListPointer = gl.glGenLists(1);
+
+        gl.glNewList(displayListPointer, GL_COMPILE);
+
+        for (Material material : primitiveBuffer.getMaterials()) {
+
+            if (material.getTransparency() == Transparency.TRUE) {
+
+                for (Primitive primitive : primitiveBuffer.getPrimitives(material)) {
+                    transparentPrimitives.add(
+                            new PrimitiveWithMaterial(primitive, material));
+                }
+
+            } else {
+
+                JOGLTarget.setMaterial(gl, material, textureManager);
+
+                for (Primitive primitive : primitiveBuffer.getPrimitives(material)) {
+                    drawPrimitive(gl, getGLConstant(primitive.type),
+                            primitive.vertices, primitive.normals,
+                            primitive.texCoordLists);
+                }
+
+            }
+
+        }
+
+        gl.glEndList();
+
+    }
+
+    @Override
+    public void render(final Camera camera, final Projection projection) {
+
+        /* render static geometry */
+        if (displayListPointer == null) {
+            throw new IllegalStateException("display list has been deleted");
+        }
+
+        gl.glCallList(displayListPointer);
+
+        /* render transparent primitives back-to-front */
+        sortPrimitivesBackToFront(camera, projection);
+
+        Material previousMaterial = null;
+
+        for (PrimitiveWithMaterial p : transparentPrimitives) {
+
+            if (!p.material.equals(previousMaterial)) {
+                JOGLTarget.setMaterial(gl, p.material, textureManager);
+                previousMaterial = p.material;
+            }
+
+            drawPrimitive(gl, getGLConstant(p.primitive.type),
+                    p.primitive.vertices, p.primitive.normals,
+                    p.primitive.texCoordLists);
+
+        }
+
+    }
+
+    private void sortPrimitivesBackToFront(final Camera camera,
+            final Projection projection) {
+
+        if (projection.isOrthographic()
+                && abs(camera.getViewDirection().xz().angle() % (PI / 2)) < 0.01) {
+
+            /* faster sorting for cardinal directions */
+            CardinalDirection closestCardinal = closestCardinal(camera.getViewDirection().xz().angle());
+
+            if (closestCardinal.isOppositeOf(currentPrimitiveSortDirection)) {
+
+                Collections.reverse(transparentPrimitives);
+
+            } else if (closestCardinal != currentPrimitiveSortDirection) {
+
+                Comparator<PrimitiveWithMaterial> comparator = null;
+
+                switch (closestCardinal) {
+
+                    case N:
+                        comparator = new Comparator<PrimitiveWithMaterial>() {
+                            @Override
+                            public int compare(PrimitiveWithMaterial p1, PrimitiveWithMaterial p2) {
+                                return Double.compare(primitivePos(p2).z, primitivePos(p1).z);
+                            }
+                        };
+                        break;
+
+                    case E:
+                        comparator = new Comparator<PrimitiveWithMaterial>() {
+                            @Override
+                            public int compare(PrimitiveWithMaterial p1, PrimitiveWithMaterial p2) {
+                                return Double.compare(primitivePos(p2).x, primitivePos(p1).x);
+                            }
+                        };
+                        break;
+
+                    case S:
+                        comparator = new Comparator<PrimitiveWithMaterial>() {
+                            @Override
+                            public int compare(PrimitiveWithMaterial p1, PrimitiveWithMaterial p2) {
+                                return Double.compare(primitivePos(p1).z, primitivePos(p2).z);
+                            }
+                        };
+                        break;
+
+                    case W:
+                        comparator = new Comparator<PrimitiveWithMaterial>() {
+                            @Override
+                            public int compare(PrimitiveWithMaterial p1, PrimitiveWithMaterial p2) {
+                                return Double.compare(primitivePos(p1).x, primitivePos(p2).x);
+                            }
+                        };
+                        break;
+
+                }
+
+                Collections.sort(transparentPrimitives, comparator);
+
+            }
+
+            currentPrimitiveSortDirection = closestCardinal;
+
+        } else {
+
+            /* sort based on distance to camera */
+            Collections.sort(transparentPrimitives, new Comparator<PrimitiveWithMaterial>() {
+                @Override
+                public int compare(PrimitiveWithMaterial p1, PrimitiveWithMaterial p2) {
+                    return Double.compare(
+                            distanceToCameraSq(camera, p2),
+                            distanceToCameraSq(camera, p1));
+                }
+            });
+
+            currentPrimitiveSortDirection = null;
+
+        }
+
+    }
+
+    private double distanceToCameraSq(Camera camera, PrimitiveWithMaterial p) {
+        return primitivePos(p).distanceToSquared(camera.getPos());
+    }
+
+    private VectorXYZ primitivePos(PrimitiveWithMaterial p) {
+
+        double sumX = 0, sumY = 0, sumZ = 0;
+
+        for (VectorXYZ v : p.primitive.vertices) {
+            sumX += v.x;
+            sumY += v.y;
+            sumZ += v.z;
+        }
+
+        return new VectorXYZ(sumX / p.primitive.vertices.size(),
+                sumY / p.primitive.vertices.size(),
+                sumZ / p.primitive.vertices.size());
+
+    }
+
+    @Override
+    public void freeResources() {
+
+        if (displayListPointer != null) {
+            gl.glDeleteLists(displayListPointer, 1);
+            displayListPointer = null;
+        }
+
+        super.freeResources();
+
+    }
+
 }

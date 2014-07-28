@@ -17,60 +17,60 @@ import org.osm2world.viewer.view.ViewerFrame;
 
 public class OrthoTileAction extends AbstractAction implements Observer {
 
-	ViewerFrame viewerFrame;
-	Data data;
-	RenderOptions renderOptions;
+    ViewerFrame viewerFrame;
+    Data data;
+    RenderOptions renderOptions;
 
-	public OrthoTileAction(ViewerFrame viewerFrame, Data data, RenderOptions renderOptions) {
+    public OrthoTileAction(ViewerFrame viewerFrame, Data data, RenderOptions renderOptions) {
 
-		super("Ortho tile");
-		putValue(SHORT_DESCRIPTION, "Switch to orthographic view of a tile.");
+        super("Ortho tile");
+        putValue(SHORT_DESCRIPTION, "Switch to orthographic view of a tile.");
 
-		this.viewerFrame = viewerFrame;
-		this.data = data;
-		this.renderOptions = renderOptions;
-	
-		setEnabled(false);
-		data.addObserver(this);
-		
-	}
-	
-	@Override
-	public void update(Observable o, Object arg) {
-		setEnabled(data.getConversionResults() != null);
-	}
+        this.viewerFrame = viewerFrame;
+        this.data = data;
+        this.renderOptions = renderOptions;
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
+        setEnabled(false);
+        data.addObserver(this);
 
-		try {
+    }
 
-			int zoom = Integer.parseInt(
-					JOptionPane.showInputDialog(viewerFrame, "zoom level"));
-			int tileX = Integer.parseInt(
-					JOptionPane.showInputDialog(viewerFrame, "tile x"));
-			int tileY = Integer.parseInt(
-					JOptionPane.showInputDialog(viewerFrame, "tile y"));
-			int angle = Integer.parseInt(
-					JOptionPane.showInputDialog(viewerFrame, "view angle"));
-			CardinalDirection from = CardinalDirection.valueOf(
-					JOptionPane.showInputDialog(viewerFrame, "from cardinal direction"));
-			
-			AxisAlignedBoundingBoxXZ tileBounds =
-				data.getConversionResults().getMapData().getDataBoundary();
-			
-			renderOptions.camera = OrthoTilesUtil.cameraForTile(
-					data.getConversionResults().getMapProjection(),
-					new TileNumber(zoom, tileX, tileY), angle, from);
+    @Override
+    public void update(Observable o, Object arg) {
+        setEnabled(data.getConversionResults() != null);
+    }
 
-			renderOptions.projection = OrthoTilesUtil.projectionForTile(
-					data.getConversionResults().getMapProjection(),
-					new TileNumber(zoom, tileX, tileY), angle, from);
-						
-		} catch (NumberFormatException nfe) {
-			JOptionPane.showMessageDialog(viewerFrame, "invalid input");
-		}
-		
-	}
-	
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        try {
+
+            int zoom = Integer.parseInt(
+                    JOptionPane.showInputDialog(viewerFrame, "zoom level"));
+            int tileX = Integer.parseInt(
+                    JOptionPane.showInputDialog(viewerFrame, "tile x"));
+            int tileY = Integer.parseInt(
+                    JOptionPane.showInputDialog(viewerFrame, "tile y"));
+            int angle = Integer.parseInt(
+                    JOptionPane.showInputDialog(viewerFrame, "view angle"));
+            CardinalDirection from = CardinalDirection.valueOf(
+                    JOptionPane.showInputDialog(viewerFrame, "from cardinal direction"));
+
+            AxisAlignedBoundingBoxXZ tileBounds
+                    = data.getConversionResults().getMapData().getDataBoundary();
+
+            renderOptions.camera = OrthoTilesUtil.cameraForTile(
+                    data.getConversionResults().getMapProjection(),
+                    new TileNumber(zoom, tileX, tileY), angle, from);
+
+            renderOptions.projection = OrthoTilesUtil.projectionForTile(
+                    data.getConversionResults().getMapProjection(),
+                    new TileNumber(zoom, tileX, tileY), angle, from);
+
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(viewerFrame, "invalid input");
+        }
+
+    }
+
 }

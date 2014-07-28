@@ -105,7 +105,7 @@ public class ConversionFacade {
         public <R extends Renderable> Collection<R> getRenderables(
                 Class<R> renderableType, boolean includeGrid, boolean includeTerrain) {
 
-			//TODO make use of or drop includeTerrain
+            //TODO make use of or drop includeTerrain
             Collection<R> representations = new ArrayList<R>();
 
             if (includeGrid) {

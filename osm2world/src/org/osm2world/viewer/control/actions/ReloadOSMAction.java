@@ -21,71 +21,68 @@ import org.osm2world.viewer.view.ViewerFrame;
  */
 public class ReloadOSMAction extends AbstractAction implements Observer {
 
-	private final ViewerFrame viewerFrame;
-	private final Data data;
-	private final RenderOptions renderOptions;
-	private final File configFile;
-	
-	public ReloadOSMAction(ViewerFrame viewerFrame, Data data,
-			RenderOptions renderOptions, File configFile) {
-		
-		super("Reload OSM file");
-		putValue(SHORT_DESCRIPTION, "Reloads the most recently opened OSM file" +
-				" and the configuration file");
-		putValue(MNEMONIC_KEY, KeyEvent.VK_R);
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-				KeyEvent.VK_R, ActionEvent.CTRL_MASK));
-		
-		this.viewerFrame = viewerFrame;
-		this.data = data;
-		this.renderOptions = renderOptions;
-		this.configFile = configFile;
-		
-		this.setEnabled(false);
-		
-		data.addObserver(this);
-		
-	}
-	
+    private final ViewerFrame viewerFrame;
+    private final Data data;
+    private final RenderOptions renderOptions;
+    private final File configFile;
 
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		
-		/* reload config file */
-		
-		if (configFile != null) {
-		
-			try {
-				
-				PropertiesConfiguration fileConfig = new PropertiesConfiguration();
-				fileConfig.setListDelimiter(';');
-				fileConfig.load(configFile);
-				data.setConfig(fileConfig);
-				
-			} catch (ConfigurationException e) {
-				
-				JOptionPane.showMessageDialog(viewerFrame,
-						"Could not reload the properties configuration file:\n"
-						+ e.getMessage(),
-						"Error reloading configuration",
-						JOptionPane.WARNING_MESSAGE);
-				
-				System.err.println(e);
-				
-			}
-			
-		}
-		
-		/* reload OSM file */
-		
-		new OpenOSMAction(viewerFrame, data, renderOptions)
-				.openOSMFile(data.getOsmFile(), false);
-		
-	}
-	
-	@Override
-	public void update(Observable o, Object arg) {
-		this.setEnabled(data.getOsmFile() != null);
-	}
-	
+    public ReloadOSMAction(ViewerFrame viewerFrame, Data data,
+            RenderOptions renderOptions, File configFile) {
+
+        super("Reload OSM file");
+        putValue(SHORT_DESCRIPTION, "Reloads the most recently opened OSM file"
+                + " and the configuration file");
+        putValue(MNEMONIC_KEY, KeyEvent.VK_R);
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+                KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+
+        this.viewerFrame = viewerFrame;
+        this.data = data;
+        this.renderOptions = renderOptions;
+        this.configFile = configFile;
+
+        this.setEnabled(false);
+
+        data.addObserver(this);
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+
+        /* reload config file */
+        if (configFile != null) {
+
+            try {
+
+                PropertiesConfiguration fileConfig = new PropertiesConfiguration();
+                fileConfig.setListDelimiter(';');
+                fileConfig.load(configFile);
+                data.setConfig(fileConfig);
+
+            } catch (ConfigurationException e) {
+
+                JOptionPane.showMessageDialog(viewerFrame,
+                        "Could not reload the properties configuration file:\n"
+                        + e.getMessage(),
+                        "Error reloading configuration",
+                        JOptionPane.WARNING_MESSAGE);
+
+                System.err.println(e);
+
+            }
+
+        }
+
+        /* reload OSM file */
+        new OpenOSMAction(viewerFrame, data, renderOptions)
+                .openOSMFile(data.getOsmFile(), false);
+
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        this.setEnabled(data.getOsmFile() != null);
+    }
+
 }

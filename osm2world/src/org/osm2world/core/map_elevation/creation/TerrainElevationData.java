@@ -12,9 +12,9 @@ import org.osm2world.core.math.VectorXYZ;
  */
 public interface TerrainElevationData {
 
-	Collection<VectorXYZ> getSites(double minLon, double minLat,
-			double maxLon, double maxLat) throws IOException;
+    Collection<VectorXYZ> getSites(double minLon, double minLat,
+            double maxLon, double maxLat) throws IOException;
 
-	Collection<VectorXYZ> getSites(MapData mapData) throws IOException;
-	
+    Collection<VectorXYZ> getSites(MapData mapData) throws IOException;
+
 }
