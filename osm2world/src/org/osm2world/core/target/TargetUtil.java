@@ -21,6 +21,10 @@ public final class TargetUtil {
     /**
      * render all world objects to a target instance that are compatible with
      * that target type
+     * @param <R>
+     * @param target
+     * @param mapData
+     * @param renderUnderground
      */
     public static <R extends Renderable> void renderWorldObjects(
             final Target<R> target, final MapData mapData,
@@ -86,6 +90,9 @@ public final class TargetUtil {
      * renders any object to a target instance if it is a renderable compatible
      * with that target type. Also sends {@link Target#beginObject(WorldObject)}
      * calls.
+     * @param <R>
+     * @param target
+     * @param object
      */
     public static final <R extends Renderable> void renderObject(
             final Target<R> target, Object object) {

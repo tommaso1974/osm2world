@@ -13,6 +13,7 @@ import org.osm2world.core.math.AxisAlignedBoundingBoxXZ;
  * partially covered by the object's axis-aligned bounding box. When testing for
  * intersections or inclusions, only elements in the same cell need to be
  * compared.
+ * @param <T>
  */
 public class IntersectionGrid<T extends IntersectionTestObject> {
 
@@ -45,6 +46,9 @@ public class IntersectionGrid<T extends IntersectionTestObject> {
     /**
      * alternative constructor that uses a target cell size to calculate the
      * number of cells
+     * @param gridBounds
+     * @param approxCellSizeX
+     * @param approxCellSizeZ
      */
     public IntersectionGrid(AxisAlignedBoundingBoxXZ gridBounds,
             double approxCellSizeX, double approxCellSizeZ) {

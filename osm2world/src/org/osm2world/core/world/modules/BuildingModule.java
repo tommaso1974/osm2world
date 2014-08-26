@@ -384,7 +384,7 @@ public class BuildingModule extends ConfigurableWorldModule {
 
                 /* find terrain boundaries on the ground
                  * that overlap with the building */
-                List<TerrainBoundaryWorldObject> tbWorldObjects = new ArrayList<TerrainBoundaryWorldObject>();
+                List<TerrainBoundaryWorldObject> tbWorldObjects = new ArrayList<>();
 
                 for (MapOverlap<?, ?> overlap : area.getOverlaps()) {
                     MapElement other = overlap.getOther(area);
@@ -397,7 +397,7 @@ public class BuildingModule extends ConfigurableWorldModule {
                 }
 
                 /* render building parts where the building polygon does not overlap with terrain boundaries */
-                List<SimplePolygonXZ> subtractPolygons = new ArrayList<SimplePolygonXZ>();
+                List<SimplePolygonXZ> subtractPolygons = new ArrayList<>();
 
                 for (TerrainBoundaryWorldObject o : tbWorldObjects) {
 
@@ -463,9 +463,9 @@ public class BuildingModule extends ConfigurableWorldModule {
                     if (polygon.getHoles().isEmpty()) {
                         raisedBuildingPartPolys = polysAboveTBWOs;
                     } else {
-                        raisedBuildingPartPolys = new ArrayList<PolygonWithHolesXZ>();
+                        raisedBuildingPartPolys = new ArrayList<>();
                         for (PolygonWithHolesXZ p : polysAboveTBWOs) {
-                            List<SimplePolygonXZ> subPolys = new ArrayList<SimplePolygonXZ>();
+                            List<SimplePolygonXZ> subPolys = new ArrayList<>();
                             subPolys.addAll(polygon.getHoles());
                             subPolys.addAll(p.getHoles());
                             raisedBuildingPartPolys.addAll(

@@ -28,8 +28,9 @@ public class NetworkCalculator {
     private static final float ROAD_PUSHING_STEP = 0.01f;
 
     /**
-     * calculates cut and offset information for all
-     * NetworkNode/Line/AreaRepresentations of elements in a grid.
+     * TOMMASO VEDERE QUESTO PER CAPIRE COME COSTRUISCE LE ROAD calculates cut
+     * and offset information for all NetworkNode/Line/AreaRepresentations of
+     * elements in a grid.
      *
      * @param grid
      */
@@ -57,14 +58,12 @@ public class NetworkCalculator {
             if (node.getPrimaryRepresentation() instanceof JunctionNodeWorldObject) {
 
                 /* junctions */
-                calculateJunctionNodeEffects(node,
-                        (JunctionNodeWorldObject) node.getPrimaryRepresentation(),
-                        inboundNLines, outboundNLines);
+                calculateJunctionNodeEffects(node, (JunctionNodeWorldObject) node.getPrimaryRepresentation(), inboundNLines, outboundNLines);
 
             } else if (inboundNLines.size() + outboundNLines.size() == 2) {
 
                 /* visible or invisible connectors */
-                List<MapWaySegment> connectedNLines = new ArrayList<MapWaySegment>(2);
+                List<MapWaySegment> connectedNLines = new ArrayList<>(2);
                 connectedNLines.addAll(inboundNLines);
                 connectedNLines.addAll(outboundNLines);
 
@@ -222,14 +221,14 @@ public class NetworkCalculator {
         /* create list of all connected roads.
          * Order of adds is important, it needs to match
          * the order of cutVectors, coords and widths adds. */
-        List<MapWaySegment> connectedNSegments = new ArrayList<MapWaySegment>();
+        List<MapWaySegment> connectedNSegments = new ArrayList<>();
         connectedNSegments.addAll(inboundNLines);
         connectedNSegments.addAll(outboundNLines);
 
         //all cut vectors in here will point to the right from the junctions pov!
-        List<VectorXZ> cutVectors = new ArrayList<VectorXZ>(connectedNSegments.size());
-        List<VectorXZ> coords = new ArrayList<VectorXZ>(connectedNSegments.size());
-        List<Float> widths = new ArrayList<Float>(connectedNSegments.size());
+        List<VectorXZ> cutVectors = new ArrayList<>(connectedNSegments.size());
+        List<VectorXZ> coords = new ArrayList<>(connectedNSegments.size());
+        List<Float> widths = new ArrayList<>(connectedNSegments.size());
 
         /* determine cut angles:
          * always orthogonal to the connected line */
@@ -342,9 +341,9 @@ public class NetworkCalculator {
         /* set calculated information using the correct order */
         List<MapSegment> segments = node.getConnectedSegments();
 
-        ArrayList<VectorXZ> junctionCutCenters = new ArrayList<VectorXZ>(segments.size());
-        ArrayList<VectorXZ> junctionCutVectors = new ArrayList<VectorXZ>(segments.size());
-        ArrayList<Float> junctionWidths = new ArrayList<Float>(segments.size());
+        ArrayList<VectorXZ> junctionCutCenters = new ArrayList<>(segments.size());
+        ArrayList<VectorXZ> junctionCutVectors = new ArrayList<>(segments.size());
+        ArrayList<Float> junctionWidths = new ArrayList<>(segments.size());
 
         for (MapSegment segment : segments) {
 
@@ -375,6 +374,8 @@ public class NetworkCalculator {
      * @param l line with {@link NetworkWaySegmentWorldObject} as representation
      */
     private static void setOrthogonalCutVector(MapWaySegment l, boolean setStartVector) {
+
+        System.out.println("tommaso " + l.toString());
 
         VectorXZ cutVector = l.getRightNormal();
 

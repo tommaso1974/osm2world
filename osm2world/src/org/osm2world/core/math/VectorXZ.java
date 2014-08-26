@@ -50,6 +50,8 @@ public class VectorXZ implements Vector3D {
 
     /**
      * adds the parameter to this vector and returns the result
+     * @param other
+     * @return 
      */
     public VectorXZ add(VectorXZ other) {
         return new VectorXZ(x + other.x, z + other.z);
@@ -57,6 +59,8 @@ public class VectorXZ implements Vector3D {
 
     /**
      * subtracts the parameter from this vector and returns the result
+     * @param other
+     * @return 
      */
     public VectorXZ subtract(VectorXZ other) {
         return new VectorXZ(x - other.x, z - other.z);
@@ -82,6 +86,7 @@ public class VectorXZ implements Vector3D {
      * vector and is orthogonal to it.
      *
      * The resulting vector's length is 1.
+     * @return 
      */
     public VectorXZ rightNormal() {
         double length = length();
@@ -112,6 +117,8 @@ public class VectorXZ implements Vector3D {
     }
 
     /**
+     * @param other
+     * @return 
      * @see #angle()
      */
     public double angleTo(VectorXZ other) {
@@ -158,6 +165,7 @@ public class VectorXZ implements Vector3D {
      * creates vector (0,1), angle PI/2 creates vector (1,0).
      *
      * @param directionRad direction angle in radians
+     * @return 
      */
     public static VectorXZ fromAngle(double directionRad) {
         return new VectorXZ(
@@ -168,6 +176,8 @@ public class VectorXZ implements Vector3D {
     /**
      * returns the angle between two direction vectors
      *
+     * @param v1
+     * @param v2
      * @return angle as radians, in range 0 to PI
      */
     public static double angleBetween(VectorXZ v1, VectorXZ v2) {

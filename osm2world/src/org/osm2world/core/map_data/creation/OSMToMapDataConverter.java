@@ -113,8 +113,12 @@ public class OSMToMapDataConverter {
 
                 if (relation.tags.contains(MULTIPOLYON_TAG)) {
 
-                    for (MapArea area : MultipolygonAreaBuilder.
-                            createAreasForMultipolygon(relation, nodeMap)) {
+                    //TODO tommaso foro di traiano
+                    if(relation.id==1754380){
+                        System.err.println("");
+                    }
+                    
+                    for (MapArea area : MultipolygonAreaBuilder.createAreasForMultipolygon(relation, nodeMap)) {
 
                         mapAreas.add(area);
 

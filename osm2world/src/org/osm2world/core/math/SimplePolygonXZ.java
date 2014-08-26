@@ -50,8 +50,9 @@ public class SimplePolygonXZ extends PolygonXZ {
         assertNonzeroArea();
     }
 
+    @Override
     public List<LineSegmentXZ> getSegments() {
-        List<LineSegmentXZ> segments = new ArrayList<LineSegmentXZ>(vertexLoop.size());
+        List<LineSegmentXZ> segments = new ArrayList<>(vertexLoop.size());
         for (int i = 0; i + 1 < vertexLoop.size(); i++) {
             segments.add(new LineSegmentXZ(vertexLoop.get(i), vertexLoop.get(i + 1)));
         }
@@ -177,9 +178,12 @@ public class SimplePolygonXZ extends PolygonXZ {
 
     /**
      * creates a new polygon by adding a shift vector to each vector of this
+     *
+     * @param shiftVector
+     * @return
      */
     public SimplePolygonXZ shift(VectorXZ shiftVector) {
-        List<VectorXZ> newVertexLoop = new ArrayList<VectorXZ>(vertexLoop.size());
+        List<VectorXZ> newVertexLoop = new ArrayList<>(vertexLoop.size());
         newVertexLoop.add(vertexLoop.get(0).add(shiftVector));
         for (VectorXZ v : vertexLoop) {
             if (!v.equals(vertexLoop.get(0))) {

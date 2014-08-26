@@ -32,6 +32,7 @@ import org.osm2world.core.map_elevation.creation.EleConstraintEnforcer;
 import org.osm2world.core.map_elevation.data.GroundState;
 import org.osm2world.core.math.GeometryUtil;
 import org.osm2world.core.math.PolygonXYZ;
+import org.osm2world.core.math.SimplePolygonXZ;
 import org.osm2world.core.math.TriangleXYZ;
 import org.osm2world.core.math.VectorXYZ;
 import org.osm2world.core.math.VectorXZ;
@@ -64,14 +65,16 @@ public class RoadModule extends ConfigurableWorldModule {
         for (MapWaySegment line : grid.getMapWaySegments()) {
             if (isRoad(line.getTags())) {
                 line.addRepresentation(new Road(line, line.getTags()));
+               // System.out.println("TOMMASO " + line.toString());
+               // System.out.println("TOMMASO " + line.getLineSegment().toString());
             }
         }
 
         for (MapArea area : grid.getMapAreas()) {
-
+            //System.out.println("TOMMASO2 " + area.toString());
             if (isRoad(area.getTags())) {
 
-                List<VectorXZ> coords = new ArrayList<VectorXZ>();
+                List<VectorXZ> coords = new ArrayList<>();
                 for (MapNode node : area.getBoundaryNodes()) {
                     coords.add(node.getPos());
                 }
@@ -242,10 +245,9 @@ public class RoadModule extends ConfigurableWorldModule {
      *
      * @param requireLanes only include roads that are not paths and have lanes
      */
-    private static List<Road> getConnectedRoads(MapNode node,
-            boolean requireLanes) {
+    private static List<Road> getConnectedRoads(MapNode node, boolean requireLanes) {
 
-        List<Road> connectedRoadsWithLanes = new ArrayList<Road>();
+        List<Road> connectedRoadsWithLanes = new ArrayList<>();
 
         for (MapWaySegment segment : node.getConnectedWaySegments()) {
 
@@ -1424,15 +1426,12 @@ public class RoadModule extends ConfigurableWorldModule {
                     double relativeWidth;
 
                     if (lane.getAbsoluteWidth() == null) {
-                        relativeWidth = laneWidthScaling
-                                * (implicitLaneWidth / totalRoadWidth);
+                        relativeWidth = laneWidthScaling * (implicitLaneWidth / totalRoadWidth);
                     } else {
-                        relativeWidth = laneWidthScaling
-                                * (lane.getAbsoluteWidth() / totalRoadWidth);
+                        relativeWidth = laneWidthScaling * (lane.getAbsoluteWidth() / totalRoadWidth);
                     }
 
                     lane.setCalculatedValues1(relativeWidth, heightAboveRoad);
-
                     heightAboveRoad += lane.getHeightOffset();
 
                 }

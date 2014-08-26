@@ -30,7 +30,7 @@ public final class GeometryUtil {
             throw new IllegalArgumentException("vertex size must be multiple of 3");
         }
 
-        List<TriangleXYZ> triangles = new ArrayList<TriangleXYZ>(vs.size() / 3);
+        List<TriangleXYZ> triangles = new ArrayList<>(vs.size() / 3);
 
         for (int triangle = 0; triangle < vs.size() / 3; triangle++) {
 
@@ -302,6 +302,10 @@ public final class GeometryUtil {
     /**
      * three-dimensional version of
      * {@link #interpolateBetween(VectorXZ, VectorXZ, double)}
+     * @param pos1
+     * @param pos2
+     * @param influenceRatioPos2
+     * @return 
      */
     public static VectorXYZ interpolateBetween(VectorXYZ pos1, VectorXYZ pos2, double influenceRatioPos2) {
         return new VectorXYZ(
@@ -327,6 +331,11 @@ public final class GeometryUtil {
     /**
      * performs linear interpolation of any value for a position on a line
      * segment
+     * @param posForValue
+     * @param pos1
+     * @param valueAt1
+     * @param pos2
+     * @param valueAt2
      */
     public static double interpolateValue(VectorXZ posForValue,
             VectorXZ pos1, double valueAt1, VectorXZ pos2, double valueAt2) {
@@ -401,6 +410,8 @@ public final class GeometryUtil {
      * @param pointsAtStartAndEnd if true, there will be a point at lineStart
      * and lineEnd each; if false, the closest points will be half the usual
      * distance away from these
+     * @param points
+     * @return 
      */
     public static List<VectorXZ> equallyDistributePointsAlong(
             double preferredDistance, boolean pointsAtStartAndEnd,
@@ -420,7 +431,7 @@ public final class GeometryUtil {
         double pointDistance = length / numSegments;
 
         int numPoints = pointsAtStartAndEnd ? numSegments + 1 : numSegments;
-        List<VectorXZ> result = new ArrayList<VectorXZ>(numPoints);
+        List<VectorXZ> result = new ArrayList<>(numPoints);
 
         /* create the points */
         double currentDistanceFromStart = pointsAtStartAndEnd ? 0 : pointDistance / 2;
@@ -469,7 +480,7 @@ public final class GeometryUtil {
                 } else {
 
                     ArrayList<VectorXZ> vertexLoop
-                            = new ArrayList<VectorXZ>(polygon.getVertexLoop());
+                            = new ArrayList<>(polygon.getVertexLoop());
 
                     vertexLoop.add(i + 1, point);
 

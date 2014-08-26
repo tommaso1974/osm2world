@@ -94,6 +94,8 @@ public class VectorXYZ implements Vector3D, IntersectionTestObject {
     /**
      * same result as calling {@link #normalize()} after
      * {@link #cross(VectorXYZ)}, but avoids creating a temporary vector
+     * @param other
+     * @return 
      */
     public VectorXYZ crossNormalized(VectorXYZ other) {
 

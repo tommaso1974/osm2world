@@ -106,8 +106,7 @@ public class JTSConversionUtil {
     public static final Collection<PolygonWithHolesXZ>
             polygonsXZFromJTSGeometry(Geometry geometry) {
 
-        Collection<PolygonWithHolesXZ> result
-                = new ArrayList<PolygonWithHolesXZ>(1);
+        Collection<PolygonWithHolesXZ> result = new ArrayList<>(1);
 
         if (geometry instanceof Polygon) {
             if (geometry.getNumPoints() > 2) {

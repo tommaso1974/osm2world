@@ -43,6 +43,7 @@ public class PolygonXZ {
     /**
      * returns the polygon's vertices. Unlike {@link #getVertexLoop()}, there is
      * no duplication of the first/last vertex.
+     * @return 
      */
     public List<VectorXZ> getVertices() {
         return vertexLoop.subList(0, vertexLoop.size() - 1);
@@ -50,6 +51,7 @@ public class PolygonXZ {
 
     /**
      * returns the polygon's vertices. First and last vertex are equal.
+     * @return 
      */
     public List<VectorXZ> getVertexLoop() {
         return vertexLoop;
@@ -59,6 +61,7 @@ public class PolygonXZ {
      * returns a collection that contains all vertices of this polygon at least
      * once. Can be used if you don't care about whether the first/last vector
      * is duplicated.
+     * @return 
      */
     public List<VectorXZ> getVertexCollection() {
         return vertexLoop;
@@ -66,6 +69,8 @@ public class PolygonXZ {
 
     /**
      * returns the vertex at a position in the vertex sequence
+     * @param index
+     * @return 
      */
     public VectorXZ getVertex(int index) {
         assert 0 <= index && index < vertexLoop.size() - 1;
@@ -76,6 +81,8 @@ public class PolygonXZ {
      * returns the successor of the vertex at a position in the vertex sequence.
      * This wraps around the vertex loop, so the successor of the last vertex is
      * the first vertex.
+     * @param index
+     * @return 
      */
     public VectorXZ getVertexAfter(int index) {
         assert 0 <= index && index < vertexLoop.size() - 1;
@@ -86,6 +93,8 @@ public class PolygonXZ {
      * returns the predecessor of the vertex at a position in the vertex
      * sequence. This wraps around the vertex loop, so the predecessor of the
      * first vertex is the last vertex.
+     * @param index
+     * @return 
      */
     public VectorXZ getVertexBefore(int index) {
         assert 0 <= index && index < vertexLoop.size() - 1;
@@ -93,7 +102,7 @@ public class PolygonXZ {
     }
 
     public List<LineSegmentXZ> getSegments() {
-        List<LineSegmentXZ> segments = new ArrayList<LineSegmentXZ>(vertexLoop.size());
+        List<LineSegmentXZ> segments = new ArrayList<>(vertexLoop.size());
         for (int i = 0; i + 1 < vertexLoop.size(); i++) {
             segments.add(new LineSegmentXZ(vertexLoop.get(i), vertexLoop.get(i + 1)));
         }
@@ -102,6 +111,8 @@ public class PolygonXZ {
 
     /**
      * returns the polygon segment with minimum distance to a given point
+     * @param point
+     * @return 
      */
     public LineSegmentXZ getClosestSegment(VectorXZ point) {
 
@@ -123,6 +134,9 @@ public class PolygonXZ {
     /**
      * returns true if there is an intersection between this polygon and the
      * line segment defined by the parameter
+     * @param segmentP1
+     * @param segmentP2
+     * @return 
      */
     public boolean intersects(VectorXZ segmentP1, VectorXZ segmentP2) {
         //TODO: (performance): passing "vector TO second point", rather than point2, would avoid having to calc it here - and that information could be reused for all comparisons involving the segment
@@ -150,6 +164,8 @@ public class PolygonXZ {
     /**
      * returns true if there is an intersection between this polygon's and the
      * parameter polygon's sides
+     * @param outlinePolygonXZ
+     * @return 
      */
     public boolean intersects(PolygonXZ outlinePolygonXZ) {
 
@@ -166,7 +182,7 @@ public class PolygonXZ {
     public Collection<LineSegmentXZ> intersectionSegments(
             LineSegmentXZ lineSegment) {
 
-        List<LineSegmentXZ> intersectionSegments = new ArrayList<LineSegmentXZ>();
+        List<LineSegmentXZ> intersectionSegments = new ArrayList<>();
 
         for (LineSegmentXZ polygonSegment : getSegments()) {
 
@@ -188,7 +204,7 @@ public class PolygonXZ {
     public List<VectorXZ> intersectionPositions(
             LineSegmentXZ lineSegment) {
 
-        List<VectorXZ> intersectionPositions = new ArrayList<VectorXZ>();
+        List<VectorXZ> intersectionPositions = new ArrayList<>();
 
         for (int i = 0; i + 1 < vertexLoop.size(); i++) {
 
@@ -209,6 +225,7 @@ public class PolygonXZ {
 
     /**
      * returns whether this polygon is self-intersecting
+     * @return 
      */
     public boolean isSelfIntersecting() {
         return isSelfIntersecting(vertexLoop);
@@ -223,6 +240,8 @@ public class PolygonXZ {
      * never considered as self intersecting on purpose. This behavior should
      * probably be reconsidered, but currently left as is due to frequent cases
      * of such polygons.
+     * @param polygonVertexLoop
+     * @return 
      */
     public static boolean isSelfIntersecting(List<VectorXZ> polygonVertexLoop) {
 
@@ -279,7 +298,8 @@ public class PolygonXZ {
         });
 
         // A TreeSet, used for the sweepline algorithm
-        TreeSet<LineSegmentXZ> sweepLine = new TreeSet<LineSegmentXZ>(new Comparator<LineSegmentXZ>() {
+        TreeSet<LineSegmentXZ> sweepLine = new TreeSet<>(new Comparator<LineSegmentXZ>() {
+            @Override
             public int compare(LineSegmentXZ l1, LineSegmentXZ l2) {
 
                 VectorXZ v1 = l1.p1;
@@ -349,6 +369,7 @@ public class PolygonXZ {
 
     /**
      * checks whether this polygon is simple
+     * @return 
      */
     public boolean isSimple() {
         try {
@@ -390,7 +411,7 @@ public class PolygonXZ {
     }
 
     public PolygonXZ reverse() {
-        List<VectorXZ> newVertexLoop = new ArrayList<VectorXZ>(vertexLoop);
+        List<VectorXZ> newVertexLoop = new ArrayList<>(vertexLoop);
         Collections.reverse(newVertexLoop);
         return new PolygonXZ(newVertexLoop);
     }
@@ -398,6 +419,7 @@ public class PolygonXZ {
     /**
      * returns the average of all vertex coordinates. The result is not
      * necessarily contained by this polygon.
+     * @return 
      */
     public VectorXZ getCenter() {
         double x = 0, z = 0;

@@ -24,21 +24,21 @@ public class MapNode implements MapElement {
     private final VectorXZ pos;
     private final OSMNode osmNode;
 
-    private final List<NodeWorldObject> representations = new ArrayList<NodeWorldObject>(1);
+    private final List<NodeWorldObject> representations = new ArrayList<>(1);
 
-    private List<MapWaySegment> connectedWaySegments = new ArrayList<MapWaySegment>();
-    private List<MapSegment> connectedSegments = new ArrayList<MapSegment>();
+    private final List<MapWaySegment> connectedWaySegments = new ArrayList<>();
+    private final List<MapSegment> connectedSegments = new ArrayList<>();
 
-    private List<MapWaySegment> inboundLines = new ArrayList<MapWaySegment>(); //TODO: maybe use list and sort by angle?
-    private List<MapWaySegment> outboundLines = new ArrayList<MapWaySegment>();
+    private final List<MapWaySegment> inboundLines = new ArrayList<>(); //TODO: maybe use list and sort by angle?
+    private final List<MapWaySegment> outboundLines = new ArrayList<>();
 
-    private Collection<MapArea> adjacentAreas;
+    private final Collection<MapArea> adjacentAreas;
 
     public MapNode(VectorXZ pos, OSMNode osmNode) {
 
         this.pos = pos;
         this.osmNode = osmNode;
-        this.adjacentAreas = new ArrayList<MapArea>();
+        this.adjacentAreas = new ArrayList<>();
 
     }
 
@@ -106,6 +106,7 @@ public class MapNode implements MapElement {
     /**
      * returns those connected lines that start here. Sorting is as for
      * {@link #getConnectedWaySegments()}.
+     * @return 
      */
     public List<MapWaySegment> getOutboundLines() {
         return outboundLines;

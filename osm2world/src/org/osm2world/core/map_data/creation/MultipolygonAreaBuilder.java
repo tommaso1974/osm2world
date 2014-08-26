@@ -70,6 +70,8 @@ final class MultipolygonAreaBuilder {
         if (isSimpleMultipolygon(relation)) {
             return createAreasForSimpleMultipolygon(relation, nodeMap);
         } else {
+            //TODO tommaso prendere spunto su come andare a costruire un polygono
+            //in funzuione di una relation non ordinata
             return createAreasForAdvancedMultipolygon(relation, nodeMap);
         }
 
@@ -157,11 +159,18 @@ final class MultipolygonAreaBuilder {
 
         /* collect ways */
         for (OSMMember member : relation.relationMembers) {
+            if(relation.id==1754380){
+                 System.out.println("member-> " + member.toString());
+            }
+           
             if (member.member instanceof OSMWay && ("outer".equals(member.role) || "inner".equals(member.role))) {
                 innersAndOuters.add(new NodeSequence((OSMWay) member.member, nodeMap));
             }
         }
 
+        if (relation.id == 1754380) {
+            System.out.println("Calcoloniamo i singoli ring");
+        }
         /* build rings, then polygons from the ways */
         List<Ring> rings = buildRings(innersAndOuters);
         if (rings != null) {
